@@ -46,10 +46,10 @@ create table MovieActor (
 );
 
 create table Review (
-	name varchar(20),
-	time timestamp,
-	mid int,
-	rating int,
+	name 	varchar(20),
+	time 	timestamp,
+	mid 	int,
+	rating 	int,
 	comment varchar(500)
 	primary key(name, time)
 );
