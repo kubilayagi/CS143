@@ -13,7 +13,7 @@ create table Actor (
 	first 	varchar(20),
 	sex 	varchar(6),
 	dob 	date,
-	dod 	date,
+	dod 	date default 'N/A',
 	primary key(id)
 );
 
@@ -22,7 +22,7 @@ create table Director (
 	last 	varchar(20),
 	first 	varchar(20),
 	dob 	date,
-	dod 	date,
+	dod 	date default 'N/A',
 	primary key(id)
 );
 
