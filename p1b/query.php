@@ -3,16 +3,24 @@
 <head>
 	<title>1B</title>
 	<style>
-		table {
+		table, td, th {
 			border: 1px solid #000000;
 		}
-		td, th {
-		    border: 1px solid #000000;
-		    text-align: left;
+		body {
+			background: #001a33;
+            color: white;
+		}
+		button {
+			color: green;
+		}
+        textarea {
+			background: #ffcc00;
+            border: 5px solid #b3daff;
 		}
 	</style>
 </head>
 <body>
+	<h1>Movie Database Query</h1>
 	<form action="query.php" method="GET">
 		<textarea name="query" cols="60" rows="8"></textarea>
 		<input type="submit" name="submit">
