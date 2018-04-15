@@ -19,7 +19,27 @@
 			$query=$_GET["query"];
 
 		$result = $db->query($query);
-		echo $result;
+		
+		$i = 0;
+		if ($result->num_rows > 0) {
+			echo "<table>";
+			echo "<th>";
+			while($i < mysqli_num_fields($result)) {
+				
+			}
+			echo <"</th>";
+			while($row = $result->fetch_assoc()) {
+				echo "<tr>";
+
+				echo "</tr>";
+			}
+			echo "</table>"
+		}
+		else {
+			echo "No results found.";
+		}
+
+		$db->close();
 	?>
 
 </body>

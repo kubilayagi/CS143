@@ -29,7 +29,7 @@ create table Director (
 create table MovieGenre (
 	mid 	int,
 	genre 	varchar(20),
-	primary key(mid, genre)
+	primary key(mid)
 );
 
 create table MovieDirector (
