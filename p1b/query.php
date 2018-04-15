@@ -29,6 +29,8 @@
 			$query=$_GET["query"];
 
 		$result = $db->query($query);
+
+		echo "<h2>Results from MySQL:</h2>";
 		
 		$i = 0;
 		$numcols = mysqli_num_fields($result);
@@ -40,7 +42,7 @@
 				echo "<th>" . $row[$i] . "</th>";
 				$i++;
 			}
-			echo "</tr>"
+			echo "</tr>";
 
 			while($row = $result->fetch_assoc()) {
 				echo "<tr>";
@@ -50,12 +52,13 @@
 				}
 				echo "</tr>";
 			}
-			echo "</table>"
+			echo "</table>";
 		}
 		else {
 			echo "No results found.";
 		}
 
+		$result->free();
 		$db->close();
 	?>
 
