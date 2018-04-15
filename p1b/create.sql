@@ -4,7 +4,8 @@ create table Movie (
 	year 	int,
 	rating 	varchar(10),
 	company varchar(50),
-	primary key(id)
+	primary key(id),
+	check(id<=4750)
 );
 
 create table Actor (
@@ -14,7 +15,8 @@ create table Actor (
 	sex 	varchar(6),
 	dob 	date,
 	dod 	date,
-	primary key(id)
+	primary key(id),
+	check(id<=69000)
 );
 
 create table Director (
@@ -23,27 +25,33 @@ create table Director (
 	first 	varchar(20),
 	dob 	date,
 	dod 	date,
-	primary key(id)
+	primary key(id),
+	check(id<=69000)
 );
 
 create table MovieGenre (
 	mid 	int,
 	genre 	varchar(20),
 	primary key(mid)
-);
+	foreign key (mid) references Movie(id)
+) ENGINE=INNODB;
 
 create table MovieDirector (
 	mid int,
 	did int,
 	primary key(mid, did)
-);
+	foreign key (mid) references Movie(id),
+	foreign key (did) references Director(id)
+) ENGINE=INNODB;
 
 create table MovieActor (
 	mid 	int,
 	aid 	int,
 	role 	varchar(50),
-	primary key(mid, aid)
-);
+	primary key(mid, aid),
+	foreign key (mid) references Movie(id),
+	foreign key (aid) references Actor(id)
+) ENGINE=INNODB;
 
 create table Review (
 	name 	varchar(20),
@@ -51,13 +59,16 @@ create table Review (
 	mid 	int,
 	rating 	int,
 	comment varchar(500),
-	primary key(name, time)
-);
+	primary key(name, time),
+	foreign key (mid) references Movie(id)
+) ENGINE=INNODB;
 
 create table MaxPersonID (
-	id int
+	id int,
+	check(id=69000)
 );
 
 create table MaxMovieID (
-	id int
+	id int,
+	check(id=4750)
 );
