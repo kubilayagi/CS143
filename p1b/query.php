@@ -4,7 +4,7 @@
 	<title>1B</title>
 	<style>
 		table, td, th {
-			border: 1px solid #000000;
+			border: 1px solid #ffffff;
 		}
 		body {
 			background: #001a33;
@@ -48,7 +48,7 @@
 			
 			echo "<tr>";
 			while($property = mysqli_fetch_field($result)) {	//save the attribute names in an array so we can use them later
-                $array[] = $property->name;    //push back equivalent in php
+                $array[] = $property->name;    //push back equivalent in php, equiv: array_push($array, $property->name);
 				echo "<th>" . $property->name . "</th>";	//print out the names of the attributes as titles
 			}
 			echo "</tr>";
@@ -57,7 +57,12 @@
 				echo "<tr>";
                 $i = 0;
                 while($i < sizeof($array)) {
-                    echo "<td>" . $row[$array[$i]] . "</td>";	//$row essentially acts as dictionary, use name of attribute to get value for current row
+                	if (is_null($row[$array[$i]])) {
+                		echo "<td>N/A</td>";
+                	}
+                    else {
+                    	echo "<td>" . $row[$array[$i]] . "</td>";	//$row essentially acts as dictionary, use name of attribute to get value for current row
+                    }
                     $i++;
                 }
 				echo "</tr>";
