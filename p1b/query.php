@@ -53,11 +53,11 @@
 			}
 			echo "</tr>";
 
-			while($row = $result->fetch_assoc()) {		//go row by row through the results of the mysql query
+			while($row = $result->fetch_assoc()) {		//go row by row through the results of the mysql query, fetch_assoc gets a row and turns it into an array
 				echo "<tr>";
                 $i = 0;
                 while($i < sizeof($array)) {
-                	if (is_null($row[$array[$i]])) {
+                	if (is_null($row[$array[$i]])) {	//manually print N/A if the field is null to look like sample
                 		echo "<td>N/A</td>";
                 	}
                     else {
