@@ -5,7 +5,7 @@ create table Movie (
 	rating 	varchar(10),
 	company varchar(50),
 	primary key(id),
-	check(id<=4750)
+	check(id<=4750) #id must be equal to the max id number + 1 for 1c, but for now, less than 4750
 );
 
 create table Actor (
@@ -15,8 +15,8 @@ create table Actor (
 	sex 	varchar(6),
 	dob 	date,
 	dod 	date,
-	primary key(id),
-	check(id<=69000)
+	primary key(id), #id is the unique identifier for Actor table
+	check(id<=69000) #id must be equal to the max id number + 1 for 1c, but for now, less than 69000
 );
 
 create table Director (
@@ -25,32 +25,32 @@ create table Director (
 	first 	varchar(20),
 	dob 	date,
 	dod 	date,
-	primary key(id),
-	check(id<=69000)
+	primary key(id), #id is the unique identifier for Director table
+	check(id<=69000) #id must be equal to the max id number + 1 for 1c, but for now, less than 69000
 );
 
 create table MovieGenre (
 	mid 	int,
 	genre 	varchar(20),
-	primary key(mid)
-	foreign key (mid) references Movie(id)
+	primary key(mid) #id is the unique identifier for Movie table
+	foreign key (mid) references Movie(id) #movie id is primary key for Movie table
 ) ENGINE=INNODB;
 
 create table MovieDirector (
 	mid int,
 	did int,
-	primary key(mid, did)
-	foreign key (mid) references Movie(id),
-	foreign key (did) references Director(id)
+	primary key(mid, did) #mid and did combination is the unique identifier for MovieDirector table
+	foreign key (mid) references Movie(id), #movie id is primary key for Movie table
+	foreign key (did) references Director(id) #director id is primary key for Director table
 ) ENGINE=INNODB;
 
 create table MovieActor (
 	mid 	int,
 	aid 	int,
 	role 	varchar(50),
-	primary key(mid, aid),
-	foreign key (mid) references Movie(id),
-	foreign key (aid) references Actor(id)
+	primary key(mid, aid), #mid and aid combination is the unique identifier for MovieActor table
+	foreign key (mid) references Movie(id), #movie id is primary key for Movie table
+	foreign key (aid) references Actor(id) #actor id is primary key for Actor table
 ) ENGINE=INNODB;
 
 create table Review (
@@ -59,16 +59,14 @@ create table Review (
 	mid 	int,
 	rating 	int,
 	comment varchar(500),
-	primary key(name, time),
-	foreign key (mid) references Movie(id)
+	primary key(name, time), #name and time combination is the unique identifier for Review table, assuming no review can be posted about the same movie at the same time
+	foreign key (mid) references Movie(id) #movie id is primary key for Movie table
 ) ENGINE=INNODB;
 
 create table MaxPersonID (
-	id int,
-	check(id=69000)
+	id int
 );
 
 create table MaxMovieID (
-	id int,
-	check(id=4750)
+	id int
 );
