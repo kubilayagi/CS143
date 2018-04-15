@@ -50,7 +50,7 @@ create table Review (
 	time 	timestamp,
 	mid 	int,
 	rating 	int,
-	comment varchar(500)
+	comment varchar(500),
 	primary key(name, time)
 );
 
