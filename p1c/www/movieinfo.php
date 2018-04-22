@@ -31,7 +31,7 @@
 
 		$movie = "SELECT title, year, company, rating FROM Movie WHERE id=" . $id;		//need to add genre to this query
 		$actors = "SELECT CONCAT(Actor.first, \" \", Actor.last) as Name, MovieActor.role as Role FROM (Actor INNER JOIN MovieActor ON Actor.id = MovieActor.aid) WHERE MovieActor.mid=" . $id;
-		$director = "SELECT Director.first, Director.last FROM (Director INNER JOIN MovieDirector ON Director.id = MovieDirector.did) WHERE MovieDirector.mid=" . $id;
+		$director = "SELECT CONCAT(Director.first, \" \", Director.last) as Name FROM (Director INNER JOIN MovieDirector ON Director.id = MovieDirector.did) WHERE MovieDirector.mid=" . $id;
 		$genre = "SELECT genre FROM MovieGenre WHERE mid=" . $id;
 
 		$movieinfo = $db->query($movie);
@@ -40,7 +40,7 @@
 		$genreinfo = $db->query($genre);
 
 		//movie info
-		echo "<h4>Movie Information is:</h4>";
+		echo "<h4>Movie Infomrmation is:</h4>";
 		$movieoutput = $movieinfo->fetch_assoc();
 		$directoroutput = $directorinfo->fetch_assoc();
 		$genreoutput = $genreinfo->fetch_assoc();
@@ -50,7 +50,7 @@
 		echo "<br>";
 		echo "MPAA Rating: " . $movieoutput["rating"];
 		echo "<br>";
-		echo "Director: " . $directoroutput["Director.first"] . " " . $directoroutput["Director.last"];
+		echo "Director: " . $directoroutput["Name"];
 		echo "<br>";
 		echo "Genre: " . $genreoutput["genre"];
 		echo "<br>";
