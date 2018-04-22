@@ -40,7 +40,7 @@
 		$genreinfo = $db->query($genre);
 
 		//movie info
-		echo "<h4>Movie Infomrmation is:</h4>";
+		echo "<h4>Movie Information is:</h4>";
 		$movieoutput = $movieinfo->fetch_assoc();
 		$directoroutput = $directorinfo->fetch_assoc();
 		$genreoutput = $genreinfo->fetch_assoc();
