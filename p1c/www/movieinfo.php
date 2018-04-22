@@ -32,7 +32,7 @@
 		$movie = "SELECT title, year, company, rating FROM Movie WHERE id=" . $id;		//need to add genre to this query
 		$actors = "SELECT CONCAT(Actor.first, \" \", Actor.last) as Name, MovieActor.role as Role FROM (Actor INNER JOIN MovieActor ON Actor.id = MovieActor.aid) WHERE MovieActor.mid=" . $id;
 		$director = "SELECT Director.first, Director.last FROM (Director INNER JOIN MovieDirector ON Director.id = MovieDirector.did) WHERE MovieDirector.mid=" . $id;
-		$genre = "SELECT genre FROM MovieGenre WHERE id=" . $id;
+		$genre = "SELECT genre FROM MovieGenre WHERE mid=" . $id;
 
 		$movieinfo = $db->query($movie);
 		$actorinfo = $db->query($actors);
