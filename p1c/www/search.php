@@ -62,7 +62,7 @@
 		function query_print(&$query, &$db, $string) {
 			$result = $db->query($query);
 			$numcols = mysqli_num_fields($result);
-	        $array = [];
+			$array = [];
 			if ($result->num_rows > 0) {
 				echo "<table>";
 				
