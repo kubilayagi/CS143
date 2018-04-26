@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Search Actors and Movies</title>
+	<link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
 	<a href="./index.php">Home Page</a>
@@ -52,10 +53,8 @@
 			$actor_query = "";
 			$movie_query = "";
 		}
-
 		echo "<h2>Actor Results:</h2>";
 		query_print($actor_query, $db, "actor");
-		echo "<br>";
 		echo "<h2>Movie Results:</h2>";
 		query_print($movie_query, $db, "movie");
 
@@ -64,16 +63,16 @@
 			$numcols = mysqli_num_fields($result);
 			$array = [];
 			if ($result->num_rows > 0) {
-				echo "<table>";
+				echo "<table class=\"result_table result_table_highlight\">";
 				
-				echo "<tr>";
+				echo "<thead><tr>";
 				while($property = mysqli_fetch_field($result)) {	//save the attribute names in an array so we can use them later
 	                $array[] = $property->name;    //push back equivalent in php, equiv: array_push($array, $property->name);
 	                if ($property->name != 'id') 
 						echo "<th>" . $property->name . "</th>";	//print out the names of the attributes as titles
 				}
-				echo "</tr>";
-
+				echo "</tr></thead>";
+				echo "<tbody>";
 				while($row = $result->fetch_assoc()) {		//go row by row through the results of the mysql query, fetch_assoc gets a row and turns it into an array
 					echo "<tr>";
 	                $i = 1;
@@ -88,6 +87,7 @@
 	                }
 					echo "</tr>";
 				}
+				echo "</tbody>";
 				echo "</table>";
 			}
 			else {
@@ -96,6 +96,7 @@
 
 			$result->free();
 		}
+		echo "</div>";
 
 		$db->close();
 	?>

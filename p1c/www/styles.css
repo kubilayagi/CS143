@@ -1,0 +1,31 @@
+
+
+.result_table {
+    border: solid 1px #DDEEEE;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+    display: block; 
+    height: 50vh; 
+    width: 30vh;
+    overflow-y: scroll;
+}
+
+.result_table thead th {
+    background-color: #DDEFEF;
+    border: solid 1px #DDEEEE;
+    color: #336B6B;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+.result_table tbody td {
+    border: solid 1px #DDEEEE;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+}
+.result_table_highlight tbody tr:hover {
+    background-color: #CCE7E7;
+}
