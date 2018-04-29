@@ -28,7 +28,7 @@
 		if(isset($_GET['identifier'])) {
 			$id=$_GET["identifier"];
 			$movie = "SELECT title, year, company, rating FROM Movie WHERE id=" . $id;		//need to add genre to this query
-			$actors = "SELECT CONCAT(Actor.first, \" \", Actor.last) as Name, MovieActor.role as Role FROM (Actor INNER JOIN MovieActor ON Actor.id = MovieActor.aid) WHERE MovieActor.mid=" . $id;
+			$actors = "SELECT Actor.id as aid, CONCAT(Actor.first, \" \", Actor.last) as Name, MovieActor.role as Role FROM (Actor INNER JOIN MovieActor ON Actor.id = MovieActor.aid) WHERE MovieActor.mid=" . $id;
 			$director = "SELECT CONCAT(Director.first, \" \", Director.last) as Name FROM (Director INNER JOIN MovieDirector ON Director.id = MovieDirector.did) WHERE MovieDirector.mid=" . $id;
 			$genre = "SELECT genre FROM MovieGenre WHERE mid=" . $id;
 			$review = "SELECT name, time, rating, comment FROM Review WHERE mid=" . $id;
@@ -64,28 +64,24 @@
 	        $array = [];
 			if ($actorinfo->num_rows > 0) {
 				echo "<table>";
-				
 				echo "<tr>";
-				while($property = mysqli_fetch_field($actorinfo)) {	//save the attribute names in an array so we can use them later
-	                $array[] = $property->name;    //push back equivalent in php, equiv: array_push($array, $property->name);
-					echo "<th>" . $property->name . "</th>";	//print out the names of the attributes as titles
-				}
+				echo "<th>Name</th>";
+				echo "<th>Role</th>";
 				echo "</tr>";
 
 				while($row = $actorinfo->fetch_assoc()) {		//go row by row through the results of the mysql query, fetch_assoc gets a row and turns it into an array
 					echo "<tr>";
-	                $i = 0;
-	                while($i < sizeof($array)) {
-	                	if (is_null($row[$array[$i]])) {	//manually print N/A if the field is null to look like sample
+	                	if (is_null($row["Role"])) {	//manually print N/A if the field is null to look like sample
+	                		echo "<td><a href=\"./actorinfo.php?identifier=" . $row["aid"] . "\">" . $row["Name"] . "</a></td>";
 	                		echo "<td>N/A</td>";
 	                	}
 	                    else {
-	                    	echo "<td>" . $row[$array[$i]] . "</td>";	//$row essentially acts as dictionary, use name of attribute to get value for current row
+	                    	echo "<td><a href=\"./actorinfo.php?identifier=" . $row["aid"] . "\">" . $row["Name"] . "</a></td>";
+	                    	echo "<td>\"" . $row["Role"] . "\"</td>";	//$row essentially acts as dictionary, use name of attribute to get value for current row
 	                    }
-	                    $i++;
+	                    echo "</tr>";
 	                }
-					echo "</tr>";
-				}
+					
 				echo "</table>";
 			}
 			else {
