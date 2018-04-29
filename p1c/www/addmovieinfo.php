@@ -36,6 +36,8 @@
 			<option value="UR">UR</option>
 		</select>
 		<br>
+		<h4>Genre</h4>
+		<br>
 		Action<input type="checkbox" name="genre[]" id="genre" value="Action">
     	Adult<input type="checkbox" name="genre[]" id="genre" value="Adult">
     	Adventure<input type="checkbox" name="genre[]" id="genre" value="Adventure">
@@ -106,8 +108,20 @@
 		} else{
 		    echo "Could not execute $query" . mysqli_error($link);
 		}
-		
 
+		$name = "";
+		if(isset($_POST['genre']))
+			$name=($_POST['genre']);
+		foreach ($name as $genre) {
+			$genre = mysqli_real_escape_string($db, $genre);
+			$query = "INSERT INTO MovieGenre (mid, genre) VALUES ('$id', '$genre')";
+			if(mysqli_query($db, $query)){
+			    echo "Successful add ";
+			    echo $query;
+			} else{
+			    echo "Could not execute $query" . mysqli_error($link);
+			}
+		}
 
 		$db->close();
 	?>
