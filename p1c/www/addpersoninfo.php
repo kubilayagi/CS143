@@ -111,7 +111,7 @@
 					$query .= "NULL";
 				}
 				else {
-					$query .= "'$dod', ";
+					$query .= "'$dod'";
 				}
 
 				$query .= ")";
@@ -143,7 +143,7 @@
 					$query .= "NULL";
 				}
 				else {
-					$query .= "'$dod', ";
+					$query .= "'$dod'";
 				}
 
 				$query .= ")";

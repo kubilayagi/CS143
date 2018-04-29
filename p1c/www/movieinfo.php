@@ -32,17 +32,20 @@
 			$director = "SELECT CONCAT(Director.first, \" \", Director.last) as Name FROM (Director INNER JOIN MovieDirector ON Director.id = MovieDirector.did) WHERE MovieDirector.mid=" . $id;
 			$genre = "SELECT genre FROM MovieGenre WHERE mid=" . $id;
 			$review = "SELECT name, time, rating, comment FROM Review WHERE mid=" . $id;
+			$avg = "SELECT avg(rating) as avg_rating FROM Review WHERE mid=" . $id;
 
 			$movieinfo = $db->query($movie);
 			$actorinfo = $db->query($actors);
 			$directorinfo = $db->query($director);
 			$genreinfo = $db->query($genre);
 			$reviewinfo = $db->query($review);
+			$avg_review = $db->query($avg);
 
 			//movie info
 			echo "<h4>Movie Infomrmation is:</h4>";
 			$movieoutput = $movieinfo->fetch_assoc();
 			$directoroutput = $directorinfo->fetch_assoc();
+			$avgoutput = $avg_review->fetch_assoc();
 
 			echo "Title: " . $movieoutput["title"] . " (" . $movieoutput["year"] . ")";
 			echo "<br>";
@@ -89,6 +92,7 @@
 			}
 					//review info
 			echo "<br>";
+			echo "<h2>Average Review: " . round($avgoutput["avg_rating"], 1) . "/5</h2>";
 			echo "<h4>Reviews:</h4>";
 			if ($reviewinfo->num_rows > 0) {
 				echo "<table>";
@@ -102,7 +106,7 @@
 		                	echo "<h2>" . $row[name] . " says: </h2>";
 		                }
 		                echo "<p>" . $row[comment] . "</p>";
-		                echo "<h5>Rating: " . $row[rating] . "</h5>";
+		                echo "<h5>Rating: " . $row[rating] . "/5</h5>";
 					echo "</td></tr>";
 				}
 				echo "</table>";
