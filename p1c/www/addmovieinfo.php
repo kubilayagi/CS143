@@ -43,8 +43,8 @@
     	Comedy<input type="checkbox" name="genre[]" id="genre" value="Comedy">
     	Crime<input type="checkbox" name="genre[]" id="genre" value="Crime">
     	<br>
-    	Documentary<input type="checkbox" name="genre[]" id="genre" value="Documentaryk">
-    	Drama<input type="checkbox" name="genre[]" id="genre" value="Dramak">
+    	Documentary<input type="checkbox" name="genre[]" id="genre" value="Documentary">
+    	Drama<input type="checkbox" name="genre[]" id="genre" value="Drama">
     	Family<input type="checkbox" name="genre[]" id="genre" value="Family">
     	Fantasy<input type="checkbox" name="genre[]" id="genre" value="Fantasy">
     	Horror<input type="checkbox" name="genre[]" id="genre" value="Horror">
@@ -67,54 +67,48 @@
 		    die('Unable to connect to database [' . $db->connect_error . ']');
 		}
 
-		$position="";
-		$id=0; //use the max person id table to get this value
-		$first="";
-		$last="";
-		$sex="";
-		$dob="";
-		$dod="";
+		$title="";
+		$company=""; //use the max person id table to get this value
+		$year=0;
+		$rating="";
+		$genre="";
 		$query="";
 
-		$get_id="SELECT * FROM MaxPersonID";
+		$get_id="SELECT * FROM MaxMovieID";
 		$result = mysqli_query($db, $get_id);
 		$row = $result->fetch_assoc();
 		$id= (string) $row['id'];
-		$query = "UPDATE MaxPersonID SET id = id + 1;";
+		$query = "UPDATE MaxMovieID SET id = id + 1;";
 		mysqli_query($db, $query);
 
-
-		if(isset($_POST['position'])) {
-			$position = mysqli_real_escape_string($db, $_POST['position']);
-		}
-		if(isset($_POST['first'])) {
-			$first = mysqli_real_escape_string($db, $_POST['first']);
-		}
-		if(isset($_POST['last'])) {
-			$last = mysqli_real_escape_string($db, $_POST['last']);
-		}
-		if(isset($_POST['sex'])) {
-			$sex = mysqli_real_escape_string($db, $_POST['sex']);
-		}
-		if(isset($_POST['dob'])) {
-			$dob = mysqli_real_escape_string($db,$_POST['dob']);
-		}
-		if(isset($_POST['dod'])) {
-			$dod = mysqli_real_escape_string($db,$_POST['dod']);
-		}
-		if ($dod == "") $dod = "NULL";
+		if(isset($_POST['title']))
+			$title = mysqli_real_escape_string($db, $_POST['title']);
+		if ($title == "") $title = "NULL";
 		
-		if ($position = "Director") { 
-			$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
-		} else {
-			$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', '$last', '$first', '$sex', '$dob', $dod)";
-		}
-		if(mysqli_query($db, $query)){
-		    echo "Successful add";
-		    echo $query;
-		} else{
-		    echo "Could not execute $query" . mysqli_error($link);
-		}
+		if(isset($_POST['company'])) 
+			$company = mysqli_real_escape_string($db, $_POST['company']);
+		if ($company == "") $company = "NULL";
+		
+		if(isset($_POST['year'])) 
+			$year = mysqli_real_escape_string($db, $_POST['year']);
+		if ($year == "") $year = "NULL";
+		
+		if(isset($_POST['rating'])) 
+			$rating = mysqli_real_escape_string($db, $_POST['rating']);
+		if ($rating == "") $rating = "NULL";
+	
+		
+		// if ($position = "Director") { 
+		// 	$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
+		// } else {
+		// 	$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', '$last', '$first', '$sex', '$dob', $dod)";
+		// }
+		// if(mysqli_query($db, $query)){
+		//     echo "Successful add";
+		//     echo $query;
+		// } else{
+		//     echo "Could not execute $query" . mysqli_error($link);
+		// }
 		
 
 

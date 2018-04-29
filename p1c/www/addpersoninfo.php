@@ -77,7 +77,15 @@
 		if(isset($_POST['dod'])) {
 			$dod = mysqli_real_escape_string($db,$_POST['dod']);
 		}
-		if ($dod == "") $dod = NULL;
+
+		if ($position == "") $position = "NULL";
+		if ($first == "") $first = "NULL";
+		if ($last == "") $last = "NULL";
+		if ($sex == "") $sex = "NULL";
+		if ($dob == "") $dob = "NULL";
+		if ($dod == "") $dod = "NULL";
+
+	
 		
 		if ($position == "Director") { 
 			$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
