@@ -15,24 +15,49 @@
 	<a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a>
 	<a href="./add_director_to_movie.php">Add Director to Movie Relation</a>
 
-	<h1>Add new Actor/Director</h1>
+	<h1>Add new Movie</h1>
 
 	<form action="addpersoninfo.php" method="POST">
-		<input type="radio" name="position" value="Actor"> Actor
-		<input type="radio" name="position" value="Director"> Director
-		<h4>First Name</h4>
-		<input type="text" placeholder="Text input" name="first">
-		<h4>Last Name</h4>
-		<input type="text" placeholder="Text input" name="last">
+		<h4>Movie Title</h4>
+		<input type="text" placeholder="Text input" name="title">
+		<h4>Company</h4>
+		<input type="text" placeholder="Text input" name="company">
+		<h4>Year</h4>
+		<input type="text" placeholder="Text input" name="year">
+		<p>ie: 1997</p>
+		<h4>MPAA Rating</h4>
+		<select name="rating"> <!--Supplement an id here instead of using 'text'-->
+			<option value="G" selected>G</option> 
+			<option value="PG">PG</option>
+			<option value="PG-13">PG-13</option>
+			<option value="R">R</option>
+			<option value="NC-17">NC-17</option>
+			<option value="NR">NR</option>
+			<option value="UR">UR</option>
+		</select>
 		<br>
-		<input type="radio" name="sex" value="Male">Male
-		<input type="radio" name="sex" value="Female">Female
-		<h4>Date of Birth</h4>
-		<input type="text" placeholder="Text input" name="dob">
-		<p>ie: 1997-05-05</p>
-		<h4>Date of Die</h4>
-		<input type="text" placeholder="Text input" name="dod">
-		<p>(leave blank if still alive)</p>
+		Action<input type="checkbox" name="genre[]" id="genre" value="Action">
+    	Adult<input type="checkbox" name="genre[]" id="genre" value="Adult">
+    	Adventure<input type="checkbox" name="genre[]" id="genre" value="Adventure">
+    	Animation<input type="checkbox" name="genre[]" id="genre" value="Animation">
+    	Comedy<input type="checkbox" name="genre[]" id="genre" value="Comedy">
+    	Crime<input type="checkbox" name="genre[]" id="genre" value="Crime">
+    	<br>
+    	Documentary<input type="checkbox" name="genre[]" id="genre" value="Documentaryk">
+    	Drama<input type="checkbox" name="genre[]" id="genre" value="Dramak">
+    	Family<input type="checkbox" name="genre[]" id="genre" value="Family">
+    	Fantasy<input type="checkbox" name="genre[]" id="genre" value="Fantasy">
+    	Horror<input type="checkbox" name="genre[]" id="genre" value="Horror">
+    	Musical<input type="checkbox" name="genre[]" id="genre" value="Musical">
+    	<br>
+    	Mystery<input type="checkbox" name="genre[]" id="genre" value="Mystery">
+    	Romance<input type="checkbox" name="genre[]" id="genre" value="Romance">
+    	Sci-Fi<input type="checkbox" name="genre[]" id="genre" value="Sci-Fi">
+    	Short<input type="checkbox" name="genre[]" id="genre" value="Short">
+    	Thriller<input type="checkbox" name="genre[]" id="genre" value="Thriller">
+    	War<input type="checkbox" name="genre[]" id="genre" value="War">
+    	Western<input type="checkbox" name="genre[]" id="genre" value="Western">
+    	<br>
 		<input type="submit">
 	</form>
 

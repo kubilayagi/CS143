@@ -77,12 +77,12 @@
 		if(isset($_POST['dod'])) {
 			$dod = mysqli_real_escape_string($db,$_POST['dod']);
 		}
-		if ($dod == "") $dod = "NULL";
+		if ($dod == "") $dod = NULL;
 		
 		if ($position == "Director") { 
 			$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
 		} else {
-			$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', '$last', '$first', '$sex', '$dob', $dod)";
+			$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', '$last', '$first', '$sex', '$dob', '$dod')";
 		}
 		if(mysqli_query($db, $query)){
 		    echo "Successful add";
