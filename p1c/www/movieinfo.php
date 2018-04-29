@@ -16,7 +16,7 @@
 	<a href="./add_director_to_movie.php">Add Director to Movie Relation</a>
 	
 
-	<h1>Movie Infomrmation Page:</h1>
+	<h1>Movie Information Page:</h1>
 
 	<?php
 		$db = new mysqli('localhost', 'cs143', '', 'CS143');

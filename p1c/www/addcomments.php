@@ -91,7 +91,7 @@
 
 				$query .= "'$mid', '$rating', ";
 
-				if ($comment == "") {
+				if ($body == "") {
 					$query .= "NULL";
 				}
 				else {
@@ -106,10 +106,15 @@
 				    echo "Could not execute $query" . mysqli_error($db);
 				}
 			}
+
+			echo "<a href=\"./movieinfo.php?identifier=$mid\">Check out your Review on the Movie Info Page</a>";
+
 		}
 
 		$db->close();
 	?>
+
+
 
 </body>
 </html>
