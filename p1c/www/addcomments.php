@@ -14,6 +14,19 @@
 	<a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a>
 	<a href="./add_director_to_movie.php">Add Director to Movie Relation</a>
 
+	<?php
+		$db = new mysqli('localhost', 'cs143', '', 'CS143');
+
+		if($db->connect_errno > 0){
+		    die('Unable to connect to database [' . $db->connect_error . ']');
+		}
+
+		if(isset($_GET['movie_id'])) {
+			$id=$_GET["movie_id"];
+			//get title from the movie => put it in the select part of the form
+
+	?>
+
 	
 
 </body>

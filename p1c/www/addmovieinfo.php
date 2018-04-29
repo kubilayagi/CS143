@@ -107,7 +107,7 @@
 		//     echo "Successful add";
 		//     echo $query;
 		// } else{
-		//     echo "Could not execute $query" . mysqli_error($link);
+		//     echo "Could not execute $query" . mysqli_error($db);
 		// }
 		
 

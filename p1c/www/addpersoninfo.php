@@ -78,27 +78,84 @@
 			$dod = mysqli_real_escape_string($db,$_POST['dod']);
 		}
 
-		if ($position == "") $position = "NULL";
-		if ($first == "") $first = "NULL";
-		if ($last == "") $last = "NULL";
-		if ($sex == "") $sex = "NULL";
-		if ($dob == "") $dob = "NULL";
-		if ($dod == "") $dod = "NULL";
+		$should_we_insert = 1;
+		if ($position == "") {
+			$should_we_insert = 0;
+			echo "You must specify either Actor or Director for this entry.\n";
+		} 
+		if ($dob == "") {
+			$should_we_insert = 0;
+			echo "You must specify the date of birth for the Actor or Director for this entry.\n";
+		}
 
-	
-		
-		if ($position == "Director") { 
-			$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
-		} else {
-			$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', '$last', '$first', '$sex', '$dob', '$dod')";
+		$query="";
+		if ($should_we_insert = 1) {
+			if ($position == "Director") { 
+				$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', ";
+				if ($last == "") {
+					$query .= "NULL, ";
+				}
+				else {
+					$query .= "'$last', ";
+				}
+				if ($first == "") {
+					$query .= "NULL, ";
+				}
+				else {
+					$query .= "'$first', ";
+				}
+
+				$query .= "'$dob', ";
+
+				if ($dod == "") {
+					$query .= "NULL";
+				}
+				else {
+					$query .= "'$dod', ";
+				}
+
+				$query .= ")";
+				echo $query . "\n";
+			} else {
+				$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', ";
+				if ($last == "") {
+					$query .= "NULL, ";
+				}
+				else {
+					$query .= "'$last', ";
+				}
+				if ($first == "") {
+					$query .= "NULL, ";
+				}
+				else {
+					$query .= "'$first', ";
+				}
+				if ($sex == "") {
+					$query .= "NULL, ";
+				}
+				else {
+					$query .= "'$sex', ";
+				}
+
+				$query .= "'$dob', ";
+
+				if ($dod == "") {
+					$query .= "NULL";
+				}
+				else {
+					$query .= "'$dod', ";
+				}
+
+				$query .= ")";
+				echo $query;
+			}
+			if(mysqli_query($db, $query)){
+			    echo "Successful add";
+			    echo $query;
+			} else{
+			    echo "Could not execute $query" . mysqli_error($db);
+			}
 		}
-		if(mysqli_query($db, $query)){
-		    echo "Successful add";
-		    echo $query;
-		} else{
-		    echo "Could not execute $query" . mysqli_error($link);
-		}
-		
 
 
 		$db->close();
@@ -106,3 +163,6 @@
 
 </body>
 </html>
+
+
+
