@@ -17,7 +17,7 @@
 
 	<h1>Add new Movie</h1>
 
-	<form action="addpersoninfo.php" method="POST">
+	<form action="addmovieinfo.php" method="POST">
 		<h4>Movie Title</h4>
 		<input type="text" placeholder="Text input" name="title">
 		<h4>Company</h4>
@@ -98,17 +98,14 @@
 		if ($rating == "") $rating = "NULL";
 	
 		
-		// if ($position = "Director") { 
-		// 	$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
-		// } else {
-		// 	$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', '$last', '$first', '$sex', '$dob', $dod)";
-		// }
-		// if(mysqli_query($db, $query)){
-		//     echo "Successful add";
-		//     echo $query;
-		// } else{
-		//     echo "Could not execute $query" . mysqli_error($link);
-		// }
+		$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', '$title', '$company', '$year', '$rating')";
+
+		if(mysqli_query($db, $query)){
+		    echo "Successful add ";
+		    echo $query;
+		} else{
+		    echo "Could not execute $query" . mysqli_error($link);
+		}
 		
 
 
