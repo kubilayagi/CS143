@@ -43,8 +43,7 @@
 			echo "<h4>Movie Infomrmation is:</h4>";
 			$movieoutput = $movieinfo->fetch_assoc();
 			$directoroutput = $directorinfo->fetch_assoc();
-			$genreoutput = $genreinfo->fetch_assoc();
-			$reviewoutput = $reviewinfo->fetch_assoc();
+
 			echo "Title: " . $movieoutput["title"] . " (" . $movieoutput["year"] . ")";
 			echo "<br>";
 			echo "Producer: " . $movieoutput["company"];
@@ -53,7 +52,11 @@
 			echo "<br>";
 			echo "Director: " . $directoroutput["Name"];
 			echo "<br>";
-			echo "Genre: " . $genreoutput["genre"];
+			echo "Genre: ";
+			while ($genreoutput = $genreinfo->fetch_assoc()) {
+				echo $genreoutput["genre"] . " ";
+			}
+
 			echo "<br>";
 
 			//actor info
@@ -94,13 +97,17 @@
 			if ($reviewinfo->num_rows > 0) {
 				echo "<table>";
 
-				while($row = $actorinfo->fetch_assoc()) {	
-					echo "<tr>";
-	                echo "<p>" . $row[time] . "</p>";
-	                echo "<h4>" . $row[name] . " says: </h4>";
-	                echo "<h5>Rating: " . $row[rating] . " says: </h5>";
-	                echo "<p>" . $row[comment] . "</p>";
-					echo "</tr>";
+				while($row = $reviewinfo->fetch_assoc()) {	
+					echo "<tr><td>";
+		                echo $row[time];
+		                if (is_null($row[name])){
+		                	echo "<h2>An anonymous user says: </h2>";
+		                } else {
+		                	echo "<h2>" . $row[name] . " says: </h2>";
+		                }
+		                echo "<p>" . $row[comment] . "</p>";
+		                echo "<h5>Rating: " . $row[rating] . "</h5>";
+					echo "</td></tr>";
 				}
 				echo "</table>";
 			}

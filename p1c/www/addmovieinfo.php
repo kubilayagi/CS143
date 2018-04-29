@@ -102,6 +102,7 @@
 		
 		$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', '$title', '$company', '$year', '$rating')";
 
+
 		if(mysqli_query($db, $query)){
 		    echo "Successful add ";
 		    echo $query;
@@ -119,7 +120,7 @@
 			    echo "Successful add ";
 			    echo $query;
 			} else{
-			    echo "Could not execute $query" . mysqli_error($link);
+			    echo "Could not execute $query" . mysqli_error($db);
 			}
 		}
 
