@@ -17,7 +17,7 @@
 
 	<h1>Add new Movie</h1>
 
-	<form action="addpersoninfo.php" method="POST">
+	<form action="addmovieinfo.php" method="POST">
 		<h4>Movie Title</h4>
 		<input type="text" placeholder="Text input" name="title">
 		<h4>Company</h4>
@@ -35,6 +35,8 @@
 			<option value="NR">NR</option>
 			<option value="UR">UR</option>
 		</select>
+		<br>
+		<h4>Genre</h4>
 		<br>
 		Action<input type="checkbox" name="genre[]" id="genre" value="Action">
     	Adult<input type="checkbox" name="genre[]" id="genre" value="Adult">
@@ -98,19 +100,29 @@
 		if ($rating == "") $rating = "NULL";
 	
 		
-		// if ($position = "Director") { 
-		// 	$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
-		// } else {
-		// 	$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', '$last', '$first', '$sex', '$dob', $dod)";
-		// }
-		// if(mysqli_query($db, $query)){
-		//     echo "Successful add";
-		//     echo $query;
-		// } else{
-		//     echo "Could not execute $query" . mysqli_error($db);
-		// }
-		
+		$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', '$title', '$company', '$year', '$rating')";
 
+
+		if(mysqli_query($db, $query)){
+		    echo "Successful add ";
+		    echo $query;
+		} else{
+		    echo "Could not execute $query" . mysqli_error($link);
+		}
+
+		$name = "";
+		if(isset($_POST['genre']))
+			$name=($_POST['genre']);
+		foreach ($name as $genre) {
+			$genre = mysqli_real_escape_string($db, $genre);
+			$query = "INSERT INTO MovieGenre (mid, genre) VALUES ('$id', '$genre')";
+			if(mysqli_query($db, $query)){
+			    echo "Successful add ";
+			    echo $query;
+			} else{
+			    echo "Could not execute $query" . mysqli_error($link);
+			}
+		}
 
 		$db->close();
 	?>
