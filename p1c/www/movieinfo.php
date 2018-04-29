@@ -41,6 +41,7 @@
 			echo "<h4>Movie Infomrmation is:</h4>";
 			$movieoutput = $movieinfo->fetch_assoc();
 			$directoroutput = $directorinfo->fetch_assoc();
+			
 			echo "Title: " . $movieoutput["title"] . " (" . $movieoutput["year"] . ")";
 			echo "<br>";
 			echo "Producer: " . $movieoutput["company"];
@@ -49,10 +50,11 @@
 			echo "<br>";
 			echo "Director: " . $directoroutput["Name"];
 			echo "<br>";
-			echo "Genre: "
-			while($genreoutput = $genreinfo->fetch_assoc()) {
-			 	echo $genreoutput["genre"] . " ";
+			echo "Genre: ";
+			while ($genreoutput = $genreinfo->fetch_assoc()) {
+				echo $genreoutput["genre"] . " ";
 			}
+
 			echo "<br>";
 
 			//actor info
