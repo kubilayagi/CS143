@@ -66,8 +66,7 @@
 		if(isset($_POST['submit'])) {
 			$mid_select = $_POST['movietitle'];
 			$aid_select = $_POST['actorname'];
-			$role = $_POST['role'];
-			//TODO: sanitize this
+			$role = mysqli_real_escape_string($db,$_POST['role']);
 		}
 
 		echo $mid_select;
