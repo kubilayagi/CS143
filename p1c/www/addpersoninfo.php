@@ -43,7 +43,7 @@
 		}
 
 		$position="";
-		$id=""; //use the max person id table to get this value
+		$id=0; //use the max person id table to get this value
 		$first="";
 		$last="";
 		$sex="";
@@ -55,13 +55,15 @@
 		$result = mysqli_query($db, $get_id);
 		$row = $result->fetch_assoc();
 		$id= (string) $row['id'];
+		$query = "UPDATE MaxPersonID SET id = id + 1;";
+		mysqli_query($db, $query);
 
 
 		if(isset($_POST['position'])) {
 			$position = mysqli_real_escape_string($db, $_POST['position']);
 		}
 		if(isset($_POST['first'])) {
-			$first = mysqli_real_escape_string($db, $_POST['first']);;
+			$first = mysqli_real_escape_string($db, $_POST['first']);
 		}
 		if(isset($_POST['last'])) {
 			$last = mysqli_real_escape_string($db, $_POST['last']);
@@ -75,8 +77,9 @@
 		if(isset($_POST['dod'])) {
 			$dod = mysqli_real_escape_string($db,$_POST['dod']);
 		}
+		if ($dod == "") $dod = "NULL";
 		 
-		$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', '$dod')";
+		$query = "INSERT INTO $position (id, last, first, dob, dod) VALUES ('$id', '$last', '$first', '$dob', $dod)";
 		if(mysqli_query($db, $query)){
 		    echo "Successful add";
 		    echo $query;
