@@ -82,12 +82,8 @@
 				else {
 					$query .= "'$name', ";
 				}
-				if ($time == "") {
-					$query .= "NULL, ";
-				}
-				else {
-					$query .= "CURRENT_TIME(), ";
-				}
+
+				$query .= "CURRENT_TIME(), ";
 
 				$query .= "'$mid', '$rating', ";
 
@@ -95,7 +91,7 @@
 					$query .= "NULL";
 				}
 				else {
-					$query .= "'$body', ";
+					$query .= "'$body'";
 				}
 
 				$query .= ")";

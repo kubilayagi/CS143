@@ -31,17 +31,19 @@
 			$actors = "SELECT CONCAT(Actor.first, \" \", Actor.last) as Name, MovieActor.role as Role FROM (Actor INNER JOIN MovieActor ON Actor.id = MovieActor.aid) WHERE MovieActor.mid=" . $id;
 			$director = "SELECT CONCAT(Director.first, \" \", Director.last) as Name FROM (Director INNER JOIN MovieDirector ON Director.id = MovieDirector.did) WHERE MovieDirector.mid=" . $id;
 			$genre = "SELECT genre FROM MovieGenre WHERE mid=" . $id;
+			$review = "SELECT name, time, rating, comment FROM Review WHERE mid=" . $id;
 
 			$movieinfo = $db->query($movie);
 			$actorinfo = $db->query($actors);
 			$directorinfo = $db->query($director);
 			$genreinfo = $db->query($genre);
+			$reviewinfo = $db->query($review);
 
 			//movie info
 			echo "<h4>Movie Infomrmation is:</h4>";
 			$movieoutput = $movieinfo->fetch_assoc();
 			$directoroutput = $directorinfo->fetch_assoc();
-			
+
 			echo "Title: " . $movieoutput["title"] . " (" . $movieoutput["year"] . ")";
 			echo "<br>";
 			echo "Producer: " . $movieoutput["company"];
@@ -90,11 +92,37 @@
 				echo "No results found.";
 			}
 					//review info
+			echo "<br>";
+			echo "<h4>Reviews:</h4>";
+			if ($reviewinfo->num_rows > 0) {
+				echo "<table>";
+
+				while($row = $reviewinfo->fetch_assoc()) {	
+					echo "<tr><td>";
+		                echo $row[time];
+		                if (is_null($row[name])){
+		                	echo "<h2>An anonymous user says: </h2>";
+		                } else {
+		                	echo "<h2>" . $row[name] . " says: </h2>";
+		                }
+		                echo "<p>" . $row[comment] . "</p>";
+		                echo "<h5>Rating: " . $row[rating] . "</h5>";
+					echo "</td></tr>";
+				}
+				echo "</table>";
+			}
+			else {
+				echo "No reviews for this movie.";
+			}
+
+			echo "<br>";
+			echo "<a href=\"./addcomments.php?movie_id=" . $id . "\">Add a review...</a>";
 
 			$actorinfo->free();
 			$movieinfo->free();
 			$db->close();
 		}
+
 	?>
 
 	<h4>Search:</h4>
