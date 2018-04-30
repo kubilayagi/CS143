@@ -60,7 +60,7 @@
     	War<input type="checkbox" name="genre[]" id="genre" value="War">
     	Western<input type="checkbox" name="genre[]" id="genre" value="Western">
     	<br><br>
-		<input type="submit">
+		<input type="submit" name="submit">
 	</form>
 
 	<?php
@@ -69,61 +69,62 @@
 		    die('Unable to connect to database [' . $db->connect_error . ']');
 		}
 
-		$title="";
-		$company=""; //use the max person id table to get this value
-		$year=0;
-		$rating="";
-		$genre="";
-		$query="";
+		if (isset($_POST["submit"])) {
+			$title="";
+			$company=""; //use the max person id table to get this value
+			$year=0;
+			$rating="";
+			$genre="";
+			$query="";
 
-		$get_id="SELECT * FROM MaxMovieID";
-		$result = mysqli_query($db, $get_id);
-		$row = $result->fetch_assoc();
-		$id= (string) $row['id'];
-		$query = "UPDATE MaxMovieID SET id = id + 1;";
-		mysqli_query($db, $query);
+			$get_id="SELECT * FROM MaxMovieID";
+			$result = mysqli_query($db, $get_id);
+			$row = $result->fetch_assoc();
+			$id= (string) $row['id'];
+			$query = "UPDATE MaxMovieID SET id = id + 1;";
+			mysqli_query($db, $query);
 
-		if(isset($_POST['title']))
-			$title = mysqli_real_escape_string($db, $_POST['title']);
-		if ($title == "") $title = "NULL";
+			if(isset($_POST['title']))
+				$title = mysqli_real_escape_string($db, $_POST['title']);
+			if ($title == "") $title = "NULL";
+			
+			if(isset($_POST['company'])) 
+				$company = mysqli_real_escape_string($db, $_POST['company']);
+			if ($company == "") $company = "NULL";
+			
+			if(isset($_POST['year'])) 
+				$year = mysqli_real_escape_string($db, $_POST['year']);
+			if ($year == "") $year = "NULL";
+			
+			if(isset($_POST['rating'])) 
+				$rating = mysqli_real_escape_string($db, $_POST['rating']);
+			if ($rating == "") $rating = "NULL";
 		
-		if(isset($_POST['company'])) 
-			$company = mysqli_real_escape_string($db, $_POST['company']);
-		if ($company == "") $company = "NULL";
-		
-		if(isset($_POST['year'])) 
-			$year = mysqli_real_escape_string($db, $_POST['year']);
-		if ($year == "") $year = "NULL";
-		
-		if(isset($_POST['rating'])) 
-			$rating = mysqli_real_escape_string($db, $_POST['rating']);
-		if ($rating == "") $rating = "NULL";
-	
-		
-		$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', '$title', '$company', '$year', '$rating')";
+			
+			$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', '$title', '$company', '$year', '$rating')";
 
 
-		if(mysqli_query($db, $query)){
-		    echo "Successful add ";
-		    echo $query;
-		} else{
-		    echo "Could not execute $query" . mysqli_error($link);
-		}
-
-		$name = "";
-		if(isset($_POST['genre']))
-			$name=($_POST['genre']);
-		foreach ($name as $genre) {
-			$genre = mysqli_real_escape_string($db, $genre);
-			$query = "INSERT INTO MovieGenre (mid, genre) VALUES ('$id', '$genre')";
 			if(mysqli_query($db, $query)){
 			    echo "Successful add ";
 			    echo $query;
 			} else{
-			    echo "Could not execute $query" . mysqli_error($db);
+			    echo "Could not execute $query" . mysqli_error($link);
+			}
+
+			$name = "";
+			if(isset($_POST['genre']))
+				$name=($_POST['genre']);
+			foreach ($name as $genre) {
+				$genre = mysqli_real_escape_string($db, $genre);
+				$query = "INSERT INTO MovieGenre (mid, genre) VALUES ('$id', '$genre')";
+				if(mysqli_query($db, $query)){
+				    echo "Successful add ";
+				    echo $query;
+				} else{
+				    echo "Could not execute $query" . mysqli_error($db);
+				}
 			}
 		}
-
 		$db->close();
 	?>
 </div>

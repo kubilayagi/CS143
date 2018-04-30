@@ -23,7 +23,7 @@
 		<h3>Explore:</h3>
 		<input type="text" placeholder="Search..." name="search">
 		<br><br>
-		<input type="submit">
+		<input type="submit" name="submit">
 	</form>
 
 	<?php
@@ -33,6 +33,7 @@
 		    die('Unable to connect to database [' . $db->connect_error . ']');
 		}
 
+		
 		if(isset($_GET['search'])) {
 			$search=$_GET['search'];
 
@@ -57,10 +58,12 @@
 			$actor_query = "";
 			$movie_query = "";
 		}
-		echo "<h2>Actor Results:</h2>";
-		query_print($actor_query, $db, "actor");
-		echo "<h2>Movie Results:</h2>";
-		query_print($movie_query, $db, "movie");
+		if (isset($_GET["submit"])) {
+			echo "<h2>Actor Results:</h2>";
+			query_print($actor_query, $db, "actor");
+			echo "<h2>Movie Results:</h2>";
+			query_print($movie_query, $db, "movie");
+		}
 
 		function query_print(&$query, &$db, $string) {
 			$result = $db->query($query);
