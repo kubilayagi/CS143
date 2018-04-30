@@ -83,10 +83,10 @@
 		if(isset($_POST['submit']) && isset($_POST['movietitle']) && isset($_POST['actorname'])) {
             $insert = "INSERT INTO MovieActor (mid, aid, role) VALUES ('$mid_select', '$aid_select', '$role')";
             if(mysqli_query($db, $insert)){
-                echo "Successful add ";
-                echo $insert;
+                echo "Successful add.";
+                //echo $insert;
             } else{
-                echo "Could not execute $query" . mysqli_error($link);
+                echo "Could not execute query";
             }
         }
 	?>

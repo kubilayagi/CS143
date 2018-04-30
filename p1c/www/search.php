@@ -58,12 +58,12 @@
 			$actor_query = "";
 			$movie_query = "";
 		}
-		if (isset($_GET["submit"])) {
+		//if (isset($_GET["submit"])) {
 			echo "<h2>Actor Results:</h2>";
 			query_print($actor_query, $db, "actor");
 			echo "<h2>Movie Results:</h2>";
 			query_print($movie_query, $db, "movie");
-		}
+		//}
 
 		function query_print(&$query, &$db, $string) {
 			$result = $db->query($query);

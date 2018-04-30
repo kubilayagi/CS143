@@ -101,10 +101,10 @@
 
 				$query .= ")";
 				if(mysqli_query($db, $query)){
-				    echo "Successful add ";
-				    echo $query;
+				    echo "Successful add.";
+				    //echo $query;
 				} else{
-				    echo "Could not execute $query" . mysqli_error($db);
+				    echo "Could not execute query";
 				}
 			}
 

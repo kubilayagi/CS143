@@ -84,11 +84,13 @@
 			$should_we_insert = 1;
 			if ($position == "") {
 				$should_we_insert = 0;
-				echo "You must specify either Actor or Director for this entry.\n";
+				echo "You must specify either Actor or Director for this entry.";
+				echo "<br>";
 			} 
 			if ($dob == "") {
 				$should_we_insert = 0;
-				echo "You must specify the date of birth for the Actor or Director for this entry.\n";
+				echo "You must specify the date of birth for the Actor or Director for this entry.";
+				echo "<br>";
 			}
 
 			$query="";
@@ -118,7 +120,7 @@
 					}
 
 					$query .= ")";
-					echo $query . "\n";
+					//echo $query . "\n";
 				} else {
 					$query = "INSERT INTO $position (id, last, first, sex, dob, dod) VALUES ('$id', ";
 					if ($last == "") {
@@ -150,13 +152,13 @@
 					}
 
 					$query .= ")";
-					echo $query;
+					//echo $query;
 				}
 				if(mysqli_query($db, $query)){
-				    echo "Successful add";
-				    echo $query;
+				    echo "Successful add.";
+				    //echo $query;
 				} else{
-				    echo "Could not execute $query" . mysqli_error($db);
+				    echo "Could not execute query";
 				}
 			}
 

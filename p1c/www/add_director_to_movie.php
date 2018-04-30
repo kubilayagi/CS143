@@ -78,10 +78,10 @@
 		if(isset($_POST['submit']) && isset($_POST['movietitle']) && isset($_POST['directorname'])) {
 			$insert = "INSERT INTO MovieDirector (mid, did) VALUES ('$mid_select', '$did_select')";
 			if(mysqli_query($db, $insert)){
-			    echo "Successful add ";
-			    echo $insert;
+			    echo "Successful add.";
+			    //echo $insert;
 			} else{
-			    echo "Could not execute $query" . mysqli_error($link);
+			    echo "Could not execute query";
 			}
         }
 

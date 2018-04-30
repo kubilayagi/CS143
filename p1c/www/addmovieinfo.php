@@ -86,29 +86,56 @@
 
 			if(isset($_POST['title']))
 				$title = mysqli_real_escape_string($db, $_POST['title']);
-			if ($title == "") $title = "NULL";
+			//if ($title == "") $title = "NULL";
 			
 			if(isset($_POST['company'])) 
 				$company = mysqli_real_escape_string($db, $_POST['company']);
-			if ($company == "") $company = "NULL";
+			//if ($company == "") $company = "NULL";
 			
 			if(isset($_POST['year'])) 
 				$year = mysqli_real_escape_string($db, $_POST['year']);
-			if ($year == "") $year = "NULL";
+			//if ($year == "") $year = "NULL";
 			
 			if(isset($_POST['rating'])) 
 				$rating = mysqli_real_escape_string($db, $_POST['rating']);
-			if ($rating == "") $rating = "NULL";
+			//if ($rating == "") $rating = "NULL";
 		
 			
-			$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', '$title', '$company', '$year', '$rating')";
+			//$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', '$title', '$company', '$year', '$rating')";
+			$query = "INSERT INTO Movie (id, title, company, year, rating) VALUES ('$id', ";
+			if ($title == "") {
+				$query .= "NULL, ";
+			}
+			else {
+				$query .= "'$title', ";
+			}
+			if ($company == "") {
+				$query .= "NULL, ";
+			}
+			else {
+				$query .= "'$company', ";
+			}
+			if ($year == "") {
+				$query .= "NULL, ";
+			}
+			else {
+				$query .= "'$year', ";
+			}
+			if ($rating == "") {
+				$query .= "NULL";
+			}
+			else {
+				$query .= "'$rating'";
+			}
+
+			$query .= ")";
 
 
 			if(mysqli_query($db, $query)){
-			    echo "Successful add ";
-			    echo $query;
+			    echo "Successful add.";
+			    //echo $query;
 			} else{
-			    echo "Could not execute $query" . mysqli_error($link);
+			    echo "Could not execute query";
 			}
 
 			$name = "";
@@ -118,10 +145,10 @@
 				$genre = mysqli_real_escape_string($db, $genre);
 				$query = "INSERT INTO MovieGenre (mid, genre) VALUES ('$id', '$genre')";
 				if(mysqli_query($db, $query)){
-				    echo "Successful add ";
-				    echo $query;
+				    //echo "Successful add.";
+				    //echo $query;
 				} else{
-				    echo "Could not execute $query" . mysqli_error($db);
+				    echo "Could not execute genre insertion";
 				}
 			}
 		}
