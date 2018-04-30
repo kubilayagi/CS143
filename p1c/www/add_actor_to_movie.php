@@ -2,19 +2,24 @@
 <html>
 <head>
 	<title>Add Actor-Movie Relation</title>
+	<link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
 
-	<a href="./index.php">Home Page</a>
-	<a href="./search.php">Search Page</a>
-	<a href="./actorinfo.php">Actor Info</a>
-	<a href="./movieinfo.php">Movie Info</a>
-	<a href="./addpersoninfo.php">Add Actor or Director</a>
-	<a href="./addmovieinfo.php">Add Movie Info</a>
-	<a href="./addcomments.php">Add Comments</a>
-	<a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a>
-	<a href="./add_director_to_movie.php">Add Director to Movie Relation</a>
+	<ul>
+		<li><a href="./index.php">Home Page</a></li>
+		<li><a href="./search.php">Search Page</a></li>
+		<li><a href="./actorinfo.php">Actor Info</a></li>
+		<li><a href="./movieinfo.php">Movie Info</a></li>
+		<li><a href="./addpersoninfo.php">Add Actor or Director</a></li>
+		<li><a href="./addmovieinfo.php">Add Movie Info</a></li>
+		<li><a href="./addcomments.php">Add Comments</a></li>
+		<li><a class="active" href="./add_actor_to_movie.php">Add Actor to Movie Relation</a></li>
+		<li><a href="./add_director_to_movie.php">Add Director to Movie Relation</a></li>
+	</ul>
 
+	<div class="container">
+	<h1>Add Actor to Movie Relation</h1>
 	<?php
 		$db = new mysqli('localhost', 'cs143', '', 'CS143');
 
@@ -29,6 +34,7 @@
 
 	?>
 	<form action="add_actor_to_movie.php" method="POST">
+		<h2></h2>
 		<h4>Movie Title:</h4>
 		<select name="movietitle">
 			<option value="NULL"></option>
@@ -57,6 +63,7 @@
 
 		<h4>Role:</h4>
 		<input type="text" name="role">
+		<br><br>
 		<input type="submit" name="submit">
 	</form>
 
@@ -83,6 +90,6 @@
             }
         }
 	?>
-
+</div>
 </body>
 </html>

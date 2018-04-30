@@ -1,5 +1,110 @@
+body {
+    font-family: "Georgia", sans-serif;
+    /*background-color: #fff5cc;*/
+    background: #f7971e; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #f7971e, #ffd200); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #f7971e, #ffd200); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
+}
 
+.container {
+    margin-left: 23%;
+}
+
+.intro {
+    width: 73%;
+    border: 2px solid #dddddd;
+    border-radius: 2%;
+    padding: 10px;
+    background-color: #f1f1f1;
+}
+
+/*https://www.w3schools.com/css/tryit.asp?filename=trycss_navbar_horizontal_black_active*/
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 20%;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+    font-size: 15px;
+    border: 2px solid #dddddd;
+}
+
+li a {
+    display: block;
+    color: #000;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+li a.active {
+    background-color: #555;
+    color: white;
+}
+
+li a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+}
+
+/*************/
+
+form {
+    margin: 0 auto;
+    border: 2px solid #dddddd;
+    border-radius: 1%;
+    padding: 5px;
+    width: 500px;
+    text-align: center;
+    background-color: #f1f1f1;
+    margin-bottom: 10px;
+}
+
+table {
+    background-color: #f1f1f1;
+    border: 2px solid #bbbbbb;
+    border: solid 1px #DDEEEE;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0 auto;
+}
+
+th {
+    width: 300px;
+    margin: 0;
+    border: 2px solid #dddddd;
+    font-size: 20px;
+}
+td {
+    text-align: center;
+    border: 2px solid #dddddd;
+}
+tr {
+    border: 2px solid #dddddd;
+    padding: 0;
+}
+
+tbody tr:hover {
+    background-color: #ffd9cc;
+}
+
+input[type="submit"] {
+    font-family: "Arial", sans-serif;
+    border-color: #e7e7e7;
+    color: black;
+    border-radius: 2%;
+    font-size: 13px;
+    background-color: white
+}
+
+input[type="submit"]:hover {
+    background: #e7e7e7;
+}
+
+/*
 .result_table {
     border: solid 1px #DDEEEE;
     border-collapse: collapse;
@@ -29,3 +134,4 @@
 .result_table_highlight tbody tr:hover {
     background-color: #CCE7E7;
 }
+*/

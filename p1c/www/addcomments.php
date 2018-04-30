@@ -2,18 +2,22 @@
 <html>
 <head>
 	<title>Add Comments</title>
+	<link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
-	<a href="./index.php">Home Page</a>
-	<a href="./search.php">Search Page</a>
-	<a href="./actorinfo.php">Actor Info</a>
-	<a href="./movieinfo.php">Movie Info</a>
-	<a href="./addpersoninfo.php">Add Actor or Director</a>
-	<a href="./addmovieinfo.php">Add Movie Info</a>
-	<a href="./addcomments.php">Add Comments</a>
-	<a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a>
-	<a href="./add_director_to_movie.php">Add Director to Movie Relation</a>
-
+	<ul>
+		<li><a href="./index.php">Home Page</a></li>
+		<li><a href="./search.php">Search Page</a></li>
+		<li><a href="./actorinfo.php">Actor Info</a></li>
+		<li><a href="./movieinfo.php">Movie Info</a></li>
+		<li><a href="./addpersoninfo.php">Add Actor or Director</a></li>
+		<li><a href="./addmovieinfo.php">Add Movie Info</a></li>
+		<li><a class="active" href="./addcomments.php">Add Comments</a></li>
+		<li><a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a></li>
+		<li><a href="./add_director_to_movie.php">Add Director to Movie Relation</a></li>
+	</ul>
+	<div class="container">
+	<h1>What's on Your Mind?</h1>
 	<?php
         $mid;
 		$db = new mysqli('localhost', 'cs143', '', 'CS143');
@@ -34,13 +38,13 @@
 	?>
 
 	<form action="addcomments.php" method="POST">
-		<h4>Movie Title</h4>
+		<h3>Movie Title:</h3>
 		<select name="movie_id">
 			<option value="<?= $mid ?>"><?= $actualmovietitle ?></option>
 		</select>
 		<h4>Your Name:</h4>
 		<input type="text" name="name">
-		<h4>Rating</h4>
+		<h4>Rating:</h4>
 		<select name="rating">
 			<option value="1">1</option>
 			<option value="2">2</option>
@@ -49,6 +53,7 @@
 			<option value="5">5</option>
 		</select>
 		<br>
+		<h4>Your Thoughts:</h4>
 		<textarea placeholder="no more than 500 characters" name="body" rows="10" cols="50"></textarea>
 		<br>
 		<input type="submit" name="submit">
@@ -110,7 +115,7 @@
 		$db->close();
 	?>
 
-
+</div>
 
 </body>
 </html>

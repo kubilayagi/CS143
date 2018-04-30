@@ -5,16 +5,19 @@
 	<link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
 <body>
-	<a href="./index.php">Home Page</a>
-	<a href="./search.php">Search Page</a>
-	<a href="./actorinfo.php">Actor Info</a>
-	<a href="./movieinfo.php">Movie Info</a>
-	<a href="./addpersoninfo.php">Add Actor or Director</a>
-	<a href="./addmovieinfo.php">Add Movie Info</a>
-	<a href="./addcomments.php">Add Comments</a>
-	<a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a>
-	<a href="./add_director_to_movie.php">Add Director to Movie Relation</a>
+	<ul>
+		<li><a href="./index.php">Home Page</a></li>
+		<li><a href="./search.php">Search Page</a></li>
+		<li><a href="./actorinfo.php">Actor Info</a></li>
+		<li><a href="./movieinfo.php">Movie Info</a></li>
+		<li><a href="./addpersoninfo.php">Add Actor or Director</a></li>
+		<li><a class="active" href="./addmovieinfo.php">Add Movie Info</a></li>
+		<li><a href="./addcomments.php">Add Comments</a></li>
+		<li><a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a></li>
+		<li><a href="./add_director_to_movie.php">Add Director to Movie Relation</a></li>
+	</ul>
 
+	<div class="container">
 	<h1>Add new Movie</h1>
 
 	<form action="addmovieinfo.php" method="POST">
@@ -37,21 +40,18 @@
 		</select>
 		<br>
 		<h4>Genre</h4>
-		<br>
 		Action<input type="checkbox" name="genre[]" id="genre" value="Action">
     	Adult<input type="checkbox" name="genre[]" id="genre" value="Adult">
     	Adventure<input type="checkbox" name="genre[]" id="genre" value="Adventure">
     	Animation<input type="checkbox" name="genre[]" id="genre" value="Animation">
     	Comedy<input type="checkbox" name="genre[]" id="genre" value="Comedy">
     	Crime<input type="checkbox" name="genre[]" id="genre" value="Crime">
-    	<br>
     	Documentary<input type="checkbox" name="genre[]" id="genre" value="Documentary">
     	Drama<input type="checkbox" name="genre[]" id="genre" value="Drama">
     	Family<input type="checkbox" name="genre[]" id="genre" value="Family">
     	Fantasy<input type="checkbox" name="genre[]" id="genre" value="Fantasy">
     	Horror<input type="checkbox" name="genre[]" id="genre" value="Horror">
     	Musical<input type="checkbox" name="genre[]" id="genre" value="Musical">
-    	<br>
     	Mystery<input type="checkbox" name="genre[]" id="genre" value="Mystery">
     	Romance<input type="checkbox" name="genre[]" id="genre" value="Romance">
     	Sci-Fi<input type="checkbox" name="genre[]" id="genre" value="Sci-Fi">
@@ -59,7 +59,7 @@
     	Thriller<input type="checkbox" name="genre[]" id="genre" value="Thriller">
     	War<input type="checkbox" name="genre[]" id="genre" value="War">
     	Western<input type="checkbox" name="genre[]" id="genre" value="Western">
-    	<br>
+    	<br><br>
 		<input type="submit">
 	</form>
 
@@ -126,6 +126,6 @@
 
 		$db->close();
 	?>
-
+</div>
 </body>
 </html>
