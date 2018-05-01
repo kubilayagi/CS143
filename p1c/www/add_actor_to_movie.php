@@ -75,9 +75,9 @@
 			$role = mysqli_real_escape_string($db,$_POST['role']);
 		}
 
-		echo $mid_select;
-		echo $aid_select;
-		echo $role;
+		//echo $mid_select;
+		//echo $aid_select;
+		//echo $role;
 
 		if(isset($_POST['submit']) && isset($_POST['movietitle']) && isset($_POST['actorname'])) {
             $insert = "INSERT INTO MovieActor (mid, aid, role) VALUES ('$mid_select', '$aid_select', '$role')";
