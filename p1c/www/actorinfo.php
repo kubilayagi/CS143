@@ -2,19 +2,18 @@
 <html>
 <head>
 	<title>Actor/Director</title>
-	<link rel="stylesheet" type="text/css" href="./styles.css">
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 	<ul>
-		<li><a href="./index.php">Home Page</a></li>
-		<li><a href="./search.php">Search Page</a></li>
+		<li><a href="index.php">Home Page</a></li>
+		<li><a href="search.php">Search Page</a></li>
 		<li><a class="active" href="./actorinfo.php">Actor Info</a></li>
-		<li><a href="./movieinfo.php">Movie Info</a></li>
-		<li><a href="./addpersoninfo.php">Add Actor or Director</a></li>
-		<li><a href="./addmovieinfo.php">Add Movie Info</a></li>
-		<li><a href="./addcomments.php">Add Comments</a></li>
-		<li><a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a></li>
-		<li><a href="./add_director_to_movie.php">Add Director to Movie Relation</a></li>
+		<li><a href="movieinfo.php">Movie Info</a></li>
+		<li><a href="addpersoninfo.php">Add Actor or Director</a></li>
+		<li><a href="addmovieinfo.php">Add Movie Info</a></li>
+		<li><a href="add_actor_to_movie.php">Add Actor to Movie Relation</a></li>
+		<li><a href="add_director_to_movie.php">Add Director to Movie Relation</a></li>
 	</ul>
 	<div class="container">
 	<h1>Actor Information Page</h1>
@@ -95,11 +94,11 @@
 	?>
 
 	
-	<form method="get" action="./search.php">
+	<form method="get" action="search.php">
 		<h3>Search:</h3>
 		<input type="text" name="search" placeholder="Search...">
 		<br><br>
-		<input type="submit" name="submitbutton" value="Submit">
+		<input type="submit" name="submit" value="Submit">
 	</form>
 	</div>
 </body>

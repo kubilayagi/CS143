@@ -2,24 +2,23 @@
 <html>
 <head>
 	<title>Search Actors and Movies</title>
-	<link rel="stylesheet" type="text/css" href="./styles.css">
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 	<ul>
-		<li><a href="./index.php">Home Page</a></li>
-		<li><a class="active" href="./search.php">Search Page</a></li>
-		<li><a href="./actorinfo.php">Actor Info</a></li>
-		<li><a href="./movieinfo.php">Movie Info</a></li>
-		<li><a href="./addpersoninfo.php">Add Actor or Director</a></li>
-		<li><a href="./addmovieinfo.php">Add Movie Info</a></li>
-		<li><a href="./addcomments.php">Add Comments</a></li>
-		<li><a href="./add_actor_to_movie.php">Add Actor to Movie Relation</a></li>
-		<li><a href="./add_director_to_movie.php">Add Director to Movie Relation</a></li>
+		<li><a href="index.php">Home Page</a></li>
+		<li><a class="active" href="search.php">Search Page</a></li>
+		<li><a href="actorinfo.php">Actor Info</a></li>
+		<li><a href="movieinfo.php">Movie Info</a></li>
+		<li><a href="addpersoninfo.php">Add Actor or Director</a></li>
+		<li><a href="addmovieinfo.php">Add Movie Info</a></li>
+		<li><a href="add_actor_to_movie.php">Add Actor to Movie Relation</a></li>
+		<li><a href="add_director_to_movie.php">Add Director to Movie Relation</a></li>
 	</ul>
 <div class="container">
 	<h1>Search for Actors and Movies</h1>
 
-	<form action="search.php" method="GET">
+	<form action="#" method="GET">
 		<h3>Explore:</h3>
 		<input type="text" placeholder="Search..." name="search">
 		<br><br>
@@ -58,12 +57,12 @@
 			$actor_query = "";
 			$movie_query = "";
 		}
-		//if (isset($_GET["submit"])) {
+		if (isset($_GET["submit"])) {
 			echo "<h2>Actor Results:</h2>";
 			query_print($actor_query, $db, "actor");
 			echo "<h2>Movie Results:</h2>";
 			query_print($movie_query, $db, "movie");
-		//}
+		}
 
 		function query_print(&$query, &$db, $string) {
 			$result = $db->query($query);
@@ -88,7 +87,7 @@
 	                		echo "<td>N/A</td>";
 	                	}
 	                    else {
-	                    	echo "<td>" . "<a href=\"./" . $string . "info.php?identifier=" . $row[$array[0]] . "\">" . $row[$array[$i]] . "</a></td>";	//$row essentially acts as dictionary, use name of attribute to get value for current row
+	                    	echo "<td>" . "<a href=\"" . $string . "info.php?identifier=" . $row[$array[0]] . "\">" . $row[$array[$i]] . "</a></td>";	//$row essentially acts as dictionary, use name of attribute to get value for current row
 	                    }
 	                    $i++;
 	                }
