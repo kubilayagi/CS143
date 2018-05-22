@@ -126,8 +126,19 @@ def sanitize(text):
     punctuated = []
     for token in split:
         token = token.lower()
-        temp = re.findall(r"[\w']+|[.,!?;:]", token)
+        temp = re.findall(r"[\w'-]+|[.,!?;:]", token) #this is getting rid of commas in numbers: should be 100,000, not 100 000
         punctuated += temp
+
+        '''
+        TODO:
+        fix cases with punctuation in the word/number: should be 100,000, not 100 000; should be i.e not i e
+        fix cases with elipses: should be ..... not . . . . . . 
+        fix cases with slashes inbetween characters: should be surrogate/regarding not surrogate regarding
+        should be gt;on not gt ; on in some cases ???????
+        don't get rid of % signs or $ signs
+
+        '''
+
 
     parsed_text = ""
     not_punctuated = []
@@ -146,22 +157,41 @@ def sanitize(text):
     bigrams = ""
     trigrams = ""
 
-    if len(not_punctuated) > 0:
-        unigrams = not_punctuated[0]
-        for i in range(1,len(not_punctuated)):
-            temp = " " + not_punctuated[i]
+    if len(punctuated) > 0:
+        if punctuated[0] not in {'.', ',', '!', '?', ';', ':'}:
+            unigrams = punctuated[0]
+        for i in range(1,len(punctuated)):
+            if punctuated[i] in {'.', ',', '!', '?', ';', ':'}:
+                continue
+            if not unigrams:
+                temp = punctuated[i]
+            else:
+                temp = " " + punctuated[i]
             unigrams += temp
 
-    if len(not_punctuated) > 1:
-        bigrams = not_punctuated[0] + "_" + not_punctuated[1]
-        for i in range(2,len(not_punctuated)):
-            temp = " " + not_punctuated[i-1] + "_" + not_punctuated[i]
+    if len(punctuated) > 1:
+        if punctuated[0] not in {'.', ',', '!', '?', ';', ':'} and punctuated[1] not in {'.', ',', '!', '?', ';', ':'}:
+            bigrams = punctuated[0] + "_" + punctuated[1]
+        for i in range(2,len(punctuated)):
+            if punctuated[i] in {'.', ',', '!', '?', ';', ':'} or punctuated[i-1] in {'.', ',', '!', '?', ';', ':'}:
+                continue
+            temp = ""
+            if not bigrams:
+                temp = punctuated[i-1] + "_" + punctuated[i]
+            else:
+                temp =  " " + punctuated[i-1] + "_" + punctuated[i]
             bigrams += temp
 
-    if len(not_punctuated) > 2:
-        trigrams = not_punctuated[0] + "_" + not_punctuated[1] + "_" + not_punctuated[2]
-        for i in range(3,len(not_punctuated)):
-            temp = " " + not_punctuated[i-2] + "_" + not_punctuated[i-1] + "_" + not_punctuated[i]
+    if len(punctuated) > 2:
+        if punctuated[0] not in {'.', ',', '!', '?', ';', ':'} and punctuated[1] not in {'.', ',', '!', '?', ';', ':'} and punctuated[2] not in {'.', ',', '!', '?', ';', ':'}:
+            trigrams = punctuated[0] + "_" + punctuated[1] + "_" + punctuated[2]
+        for i in range(3,len(punctuated)):
+            if punctuated[i] in {'.', ',', '!', '?', ';', ':'} or punctuated[i-1] in {'.', ',', '!', '?', ';', ':'} or punctuated[i-2] in {'.', ',', '!', '?', ';', ':'}:
+                continue
+            if not trigrams:
+                temp = punctuated[i-2] + "_" + punctuated[i-1] + "_" + punctuated[i]
+            else:
+                temp = " " + punctuated[i-2] + "_" + punctuated[i-1] + "_" + punctuated[i]
             trigrams += temp
 
     return [parsed_text, unigrams, bigrams, trigrams]
@@ -182,4 +212,5 @@ if __name__ == "__main__":
     for line in file:
         parsed_json = json.loads(line)
         print(sanitize(parsed_json["body"]))
+        #sanitize(parsed_json["body"])
 
