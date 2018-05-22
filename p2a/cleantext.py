@@ -5,6 +5,8 @@
 from __future__ import print_function
 
 import re
+import sys
+import json
 import string
 import argparse
 
@@ -105,6 +107,8 @@ _CONTRACTIONS = {
 
 # You may need to write regular expressions.
 
+# https://stackoverflow.com/questions/367155/splitting-a-string-into-words-and-punctuation
+
 def sanitize(text):
     """Do parse the text in variable "text" according to the spec, and return
     a LIST containing FOUR strings 
@@ -115,6 +119,50 @@ def sanitize(text):
     """
 
     # YOUR CODE GOES BELOW:
+
+    text = re.sub(r'[\n\t]', ' ', text)
+    no_url = re.sub(r'https?:\/\/\S+', '', text)
+    split = no_url.split()
+    punctuated = []
+    for token in split:
+        token = token.lower()
+        temp = re.findall(r"[\w']+|[.,!?;:]", token)
+        punctuated += temp
+
+    parsed_text = ""
+    not_punctuated = []
+    
+    if len(punctuated) > 0:
+        parsed_text = punctuated[0]
+        for i in range(1,len(punctuated)):
+            temp = " " + punctuated[i]
+            parsed_text += temp
+
+        for token in punctuated:
+            if token not in {'.', ',', '!', '?', ';', ':'}:
+                not_punctuated.append(token)
+
+    unigrams = ""
+    bigrams = ""
+    trigrams = ""
+
+    if len(not_punctuated) > 0:
+        unigrams = not_punctuated[0]
+        for i in range(1,len(not_punctuated)):
+            temp = " " + not_punctuated[i]
+            unigrams += temp
+
+    if len(not_punctuated) > 1:
+        bigrams = not_punctuated[0] + "_" + not_punctuated[1]
+        for i in range(2,len(not_punctuated)):
+            temp = " " + not_punctuated[i-1] + "_" + not_punctuated[i]
+            bigrams += temp
+
+    if len(not_punctuated) > 2:
+        trigrams = not_punctuated[0] + "_" + not_punctuated[1] + "_" + not_punctuated[2]
+        for i in range(3,len(not_punctuated)):
+            temp = " " + not_punctuated[i-2] + "_" + not_punctuated[i-1] + "_" + not_punctuated[i]
+            trigrams += temp
 
     return [parsed_text, unigrams, bigrams, trigrams]
 
@@ -128,3 +176,10 @@ if __name__ == "__main__":
     # pass to "sanitize" and print the result as a list.
 
     # YOUR CODE GOES BELOW.
+
+    filename = sys.argv[1]
+    file = open(filename, "r")
+    for line in file:
+        parsed_json = json.loads(line)
+        print(sanitize(parsed_json["body"]))
+
