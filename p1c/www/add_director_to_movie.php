@@ -70,9 +70,9 @@
 			$did_select = $_POST['directorname'];
 		}
 
-		echo $mid_select;
-		echo $did_select;
-		echo $role;
+		//echo $mid_select;
+		//echo $did_select;
+		//echo $role;
 
 		if(isset($_POST['submit']) && isset($_POST['movietitle']) && isset($_POST['directorname'])) {
 			$insert = "INSERT INTO MovieDirector (mid, did) VALUES ('$mid_select', '$did_select')";
