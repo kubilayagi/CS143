@@ -126,12 +126,15 @@ def sanitize(text):
     punctuated = []
     for token in split:
         token = token.lower()
-        temp = re.findall(r"[\w'-]+|[.,!?;:]", token) #this is getting rid of commas in numbers: should be 100,000, not 100 000
+        print(token)
+        temp = re.findall(r"([$]?[\w]+([,.\-'][\w]+)?[%]?)|[.,!?;:]", token) #this is getting rid of commas in numbers: should be 100,000, not 100 000
+        print (temp)
+        #temp = re.findall(r"[$]?[\w'-][%]?|[.,!?;:]", token)
         punctuated += temp
 
         '''
         TODO:
-        fix cases with punctuation in the word/number: should be 100,000, not 100 000; should be i.e not i e
+        fix cases with punctuation in the word/number: should be 100,000 not 100 000; should be i.e not i e
         fix cases with elipses: should be ..... not . . . . . . 
         fix cases with slashes inbetween characters: should be surrogate/regarding not surrogate regarding
         should be gt;on not gt ; on in some cases ???????
