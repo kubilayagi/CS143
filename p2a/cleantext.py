@@ -122,12 +122,14 @@ def sanitize(text):
 
     text = re.sub(r'[\n\t]', ' ', text)
     no_url = re.sub(r'https?:\/\/\S+', '', text)
-    split = no_url.split()
+    no_url2 = re.sub(r'www\.', '', no_url)
+    split = no_url2.split()
     punctuated = []
     for token in split:
         token = token.lower()
-        temp = re.findall(r"[$]?[\w]+(?:(?:[,.\-'][\w]+)?[%]?)+|[.,!?;:]", token) #this is getting rid of commas in numbers: should be 100,000, not 100 000
+        temp = re.findall(r"[$']?[\w]+(?:(?:[,.'\-\—\/]?[\w]+)?[%']?)+|[.,!?;:]", token) #this is getting rid of commas in numbers: should be 100,000, not 100 000
         #temp = re.findall(r"[$]?[\w'-][%]?|[.,!?;:]", token)
+        #print(temp)
         punctuated += temp
 
         '''
