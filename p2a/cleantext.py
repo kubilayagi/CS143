@@ -126,9 +126,7 @@ def sanitize(text):
     punctuated = []
     for token in split:
         token = token.lower()
-        print(token)
         temp = re.findall(r"[$]?[\w]+(?:(?:[,.\-'][\w]+)?[%]?)+|[.,!?;:]", token) #this is getting rid of commas in numbers: should be 100,000, not 100 000
-        print (temp)
         #temp = re.findall(r"[$]?[\w'-][%]?|[.,!?;:]", token)
         punctuated += temp
 
