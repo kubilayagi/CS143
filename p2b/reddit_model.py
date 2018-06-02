@@ -8,16 +8,9 @@ import os
 
 def main(context):
     """Main function takes a Spark SQL context."""
-    # YOUR CODE HERE
-    # YOU MAY ADD OTHER FUNCTIONS AS NEEDED
 
-if __name__ == "__main__":
-    conf = SparkConf().setAppName("CS143 Project 2B")
-    conf = conf.setMaster("local[*]")
-    sc   = SparkContext(conf=conf)
-    sqlContext = SQLContext(sc)
-    sc.addPyFile("cleantext.py")
-
+    # TASK 1
+	# Code for task 1...
     comments_DF = None
     submissions_DF = None
     labeled_data_DF = None
@@ -44,13 +37,17 @@ if __name__ == "__main__":
     	labeled_data_DF = sqlContext.read.csv("labeled_data.csv")
     	labeled_data_DF.write.parquet(labeled_data_parquet)
 
+    # TASK 2
+	# Code for task 2...
+	labeled_data_DF.createOrReplaceTempView("labeled_data")
+	comments_DF.createOrReplaceTempView("comments")
+	labeled_comments = context.sql("select * from labeled_data inner join comments on comment_id")
 
-
-
-'''
-    comments = sqlContext.read.json("comments-minimal.json.bz2")
-	submissions = sqlContext.read.json("submissions.json.bz2")
-	labeled_data = sqlContext.read.csv("labeled_data.csv")
-'''
+if __name__ == "__main__":
+    conf = SparkConf().setAppName("CS143 Project 2B")
+    conf = conf.setMaster("local[*]")
+    sc   = SparkContext(conf=conf)
+    sqlContext = SQLContext(sc)
+    sc.addPyFile("cleantext.py")
     main(sqlContext)
 
