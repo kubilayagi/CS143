@@ -56,7 +56,7 @@ def main(context):
 
 	labeled_data_DF.createOrReplaceTempView("labeled_data")
 	comments_DF.createOrReplaceTempView("comments")
-	labeled_comments = context.sql("select comments.id, labeled_data.labeldjt, body, author, author_flair_text, link_id, score, created_utc from labeled_data inner join comments on comments.id = labeled_data.Input_id")
+	labeled_comments = context.sql("select comments.id, cast(labeled_data.labeldjt as int) as label, body, author, author_flair_text, link_id, score, created_utc from labeled_data inner join comments on comments.id = labeled_data.Input_id")
 	#labeled_comments.select("id", "Input_id").show()
 	labeled_comments.show()
 
@@ -78,13 +78,13 @@ def main(context):
 	cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
 	model = cv.fit(combined)
 	vectorized = model.transform(combined)
-    
-    
-    
-    # TASK 6B
-    # Code for task 6B...
+
+
+
+	# TASK 6B
+	# Code for task 6B...
 	vectorized.createOrReplaceTempView("vectorized")
-	labeled = context.sql("select *, case when labeldjt = 1 then 1 else 0 end as poslabel, case when labeldjt = -1 then 1 else 0 end as neglabel from vectorized")
+	labeled = context.sql("select *, case when label = 1 then 1 else 0 end as poslabel, case when label = -1 then 1 else 0 end as neglabel from vectorized")
 	labeled.show()
 
 	# TASK 7
@@ -136,6 +136,16 @@ def main(context):
 	negModel.save("www/neg.model")
 
 
+	# TEST MODEL
+	posResult = posModel.transform(posTest)
+	posResult.createOrReplaceTempView("posResult")
+	posAccuracy = context.sql("select avg(case when poslabel = prediction then 1 else 0 end) as accuracy from posResult")
+	posAccuracy.show()
+
+	negResult = negModel.transform(negTest)
+	negResult.createOrReplaceTempView("negResult")
+	negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
+	negAccuracy.show()
 
 if __name__ == "__main__":
     conf = SparkConf().setAppName("CS143 Project 2B")
