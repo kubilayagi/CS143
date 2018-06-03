@@ -47,45 +47,45 @@ def main(context):
     
     # TASK 2
     # Code for task 2...
-    comments_DF.printSchema()
-    print("************")
-    submissions_DF.printSchema()
-    print("************")
-    labeled_data_DF.printSchema()
-    print("************")
+	comments_DF.printSchema()
+	print("************")
+	submissions_DF.printSchema()
+	print("************")
+	labeled_data_DF.printSchema()
+	print("************")
 
-labeled_data_DF.createOrReplaceTempView("labeled_data")
-comments_DF.createOrReplaceTempView("comments")
-labeled_comments = context.sql("select comments.id, labeled_data.labeldjt, body, author, author_flair_text, link_id, score, created_utc from labeled_data inner join comments on comments.id = labeled_data.Input_id")
-#labeled_comments.select("id", "Input_id").show()
-labeled_comments.show()
-    
-    
-    
-    
-    # TASK 4
-    # Code for task 4...
-    context.udf.register("sanitize", lambda body: reduce(lambda acc, elem: acc + elem.split(), sanitize(body)[1:], []), ArrayType(StringType()))
-    labeled_comments.createOrReplaceTempView("labeled_comments")
-    combined = context.sql("select *, sanitize(body) as words from labeled_comments")
-    
-    combined.printSchema()
-    combined.select("body", "words").show()
-    
-    
-    # TASK 6A
-    # Code for task 6A...
-    cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
-    model = cv.fit(combined)
-    vectorized = model.transform(combined)
+	labeled_data_DF.createOrReplaceTempView("labeled_data")
+	comments_DF.createOrReplaceTempView("comments")
+	labeled_comments = context.sql("select comments.id, labeled_data.labeldjt, body, author, author_flair_text, link_id, score, created_utc from labeled_data inner join comments on comments.id = labeled_data.Input_id")
+	#labeled_comments.select("id", "Input_id").show()
+	labeled_comments.show()
+
+
+
+
+	# TASK 4
+	# Code for task 4...
+	context.udf.register("sanitize", lambda body: reduce(lambda acc, elem: acc + elem.split(), sanitize(body)[1:], []), ArrayType(StringType()))
+	labeled_comments.createOrReplaceTempView("labeled_comments")
+	combined = context.sql("select *, sanitize(body) as words from labeled_comments")
+
+	combined.printSchema()
+	combined.select("body", "words").show()
+
+
+	# TASK 6A
+	# Code for task 6A...
+	cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
+	model = cv.fit(combined)
+	vectorized = model.transform(combined)
     
     
     
     #TASK 6B
     # Code for task 6B
-    vectorized = vectorized.withColumn("poslabel", (vectorized.labeldjt + 1) / 2)
-    vectorized = vectorized.withColumn("neglabel", ((vectorized.labeldjt * -1) + 1) / 2)
-    vectorized.show()
+	vectorized.createOrReplaceTempView("vectorized")
+	labeled = context.sql("select *, case when labeldjt = 1 then 1 else 0 end as posLabel, case when labeldjt = -1 then 1 else 0 end as negLabel from vectorized")
+	labeled.show()
 
 
 
