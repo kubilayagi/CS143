@@ -4,7 +4,6 @@ from pyspark.sql import SQLContext
 from cleantext import sanitize
 import csv
 import os
-#import cleantext
 
 # IMPORT OTHER MODULES HERE
 
@@ -54,10 +53,14 @@ def main(context):
 	comments_DF.createOrReplaceTempView("comments")
 	labeled_comments = context.sql("select * from labeled_data inner join comments on comments.id = labeled_data._c0")
 
+
+	# TASK 4
+    # Code for task 4...
 	context.udf.register("sanitize", sanitize)
 	labeled_comments.createOrReplaceTempView("labeled_comments")
-	sanitized = context.sql("select *, sanitize(body) from labeled_comments")
-	sanitized.printSchema()
+	combined = context.sql("select *, sanitize(body) as words from labeled_comments")
+	combined.select("body", "words").show()
+
 
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
