@@ -1,6 +1,7 @@
 from __future__ import print_function
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
+from cleantext import sanitize
 import csv
 import os
 #import cleantext
@@ -52,6 +53,11 @@ def main(context):
 	labeled_data_DF.createOrReplaceTempView("labeled_data")
 	comments_DF.createOrReplaceTempView("comments")
 	labeled_comments = context.sql("select * from labeled_data inner join comments on comments.id = labeled_data._c0")
+
+	context.udf.register("sanitize", sanitize)
+	labeled_comments.createOrReplaceTempView("labeled_comments")
+	sanitized = context.sql("select *, sanitize(body) from labeled_comments")
+	sanitized.printSchema()
 
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
