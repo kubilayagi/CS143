@@ -20,24 +20,24 @@ def main(context):
     comments_DF = None
     submissions_DF = None
     labeled_data_DF = None
-    
+
     comments_parquet = os.path.abspath("./comments-minimal.parquet")
     submissions_parquet = os.path.abspath("./submissions.parquet")
     labeled_data_parquet = os.path.abspath("./labeled_data.parquet")
-    
+
     if(os.path.exists(labeled_data_parquet)):
         labeled_data_DF = context.read.parquet(labeled_data_parquet)
     else:
         labeled_data_DF = context.read.csv("labeled_data.csv", header=True)
         labeled_data_DF.write.parquet(labeled_data_parquet)
-    
+
     if(os.path.exists(submissions_parquet)):
         submissions_DF = context.read.parquet(submissions_parquet)
     else:
         submissions_DF = context.read.json("submissions.json.bz2")
         submissions_DF.write.parquet(submissions_parquet)
-    
-    
+
+
     if(os.path.exists(comments_parquet)):
         comments_DF = context.read.parquet(comments_parquet)
     else:
@@ -150,6 +150,7 @@ def main(context):
 
     # TASK 8
     # Code for task 8...
+<<<<<<< HEAD
 	submissions_DF.createOrReplaceTempView("submissions")
 	comments_DF.createOrReplaceTempView("comments")
 	whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3)")
@@ -178,6 +179,36 @@ def main(context):
 	negResult.createOrReplaceTempView("negResult")
 	negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
 	negAccuracy.show()
+=======
+    submissions_DF.createOrReplaceTempView("submissions")
+    comments_DF.createOrReplaceTempView("comments")
+    whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id, c.score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
+    whole_data.show(20)
+
+    # TASK 9
+    # Code for task 9...
+    context.udf.register("sanitize", lambda body: reduce(lambda acc, elem: acc + elem.split(), sanitize(body)[1:], []), ArrayType(StringType()))
+    whole_data.createOrReplaceTempView("whole_data")
+    combined = context.sql("select *, sanitize(body) as words from whole_data")
+
+    combined.printSchema()
+    combined.select("body", "words").show()
+
+    cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
+    model = cv.fit(combined)
+    vectorized = model.transform(combined)
+
+    posResult = posModel.transform(vectorized)
+    negResult = negModel.transform(vectorized)
+
+    posResult.createOrReplaceTempView("posResult")
+    posAccuracy = context.sql("select avg(case when poslabel = prediction then 1 else 0 end) as accuracy from posResult")
+    posAccuracy.show()
+
+    negResult.createOrReplaceTempView("negResult")
+    negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
+    negAccuracy.show()
+>>>>>>> 86288ad704fc32bf1ac9a6bbfe2d8fe441da572b
 
 
 
