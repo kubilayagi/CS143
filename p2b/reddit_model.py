@@ -162,7 +162,7 @@ def main(context):
 	combined = context.sql("select *, sanitize(body) as words from whole_data")
 
 	combined.printSchema()
-	combined.select("body", "words").show()
+	combined = combined.select("whole_data.submission_id", "whole_data.created_utc", "whole_data.author_flair_text", "words", "whole_data.comment_id")
 
 	cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
 	model = cv.fit(combined)
