@@ -152,7 +152,7 @@ def main(context):
     # Code for task 8...
     submissions_DF.createOrReplaceTempView("submissions")
     comments_DF.createOrReplaceTempView("comments")
-    whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
+    whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id, c.score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
     whole_data.show(20)
 
     # TASK 9
