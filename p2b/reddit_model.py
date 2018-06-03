@@ -150,10 +150,9 @@ def main(context):
 
     # TASK 8
     # Code for task 8...
-<<<<<<< HEAD
 	submissions_DF.createOrReplaceTempView("submissions")
 	comments_DF.createOrReplaceTempView("comments")
-	whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3)")
+	whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id, c.score as score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
 	whole_data.show(20)
 
 	# TASK 9
@@ -163,10 +162,11 @@ def main(context):
 	combined = context.sql("select *, sanitize(body) as words from whole_data")
 
 	combined.printSchema()
-	combined = combined.select("whole_data.submission_id", "whole_data.created_utc", "whole_data.author_flair_text", "words", "whole_data.comment_id")
+	combined = combined.select("whole_data.submission_id", "whole_data.created_utc", "whole_data.author_flair_text", "words", "whole_data.comment_id", "whole_data.score")
+	combined.show()
 
 	cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
-	model = cv.fit(combined)
+	model = cv.fit(combined.select("words"))
 	vectorized = model.transform(combined)
 
 	posResult = posModel.transform(vectorized)
@@ -179,36 +179,7 @@ def main(context):
 	negResult.createOrReplaceTempView("negResult")
 	negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
 	negAccuracy.show()
-=======
-    submissions_DF.createOrReplaceTempView("submissions")
-    comments_DF.createOrReplaceTempView("comments")
-    whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id, c.score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
-    whole_data.show(20)
 
-    # TASK 9
-    # Code for task 9...
-    context.udf.register("sanitize", lambda body: reduce(lambda acc, elem: acc + elem.split(), sanitize(body)[1:], []), ArrayType(StringType()))
-    whole_data.createOrReplaceTempView("whole_data")
-    combined = context.sql("select *, sanitize(body) as words from whole_data")
-
-    combined.printSchema()
-    combined.select("body", "words").show()
-
-    cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
-    model = cv.fit(combined)
-    vectorized = model.transform(combined)
-
-    posResult = posModel.transform(vectorized)
-    negResult = negModel.transform(vectorized)
-
-    posResult.createOrReplaceTempView("posResult")
-    posAccuracy = context.sql("select avg(case when poslabel = prediction then 1 else 0 end) as accuracy from posResult")
-    posAccuracy.show()
-
-    negResult.createOrReplaceTempView("negResult")
-    negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
-    negAccuracy.show()
->>>>>>> 86288ad704fc32bf1ac9a6bbfe2d8fe441da572b
 
 
 
