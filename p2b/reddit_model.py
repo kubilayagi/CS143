@@ -175,8 +175,6 @@ def main(context):
 	negResult.select("body", "rawPrediction", "probability", "prediction").show(truncate=False, n=50)
 
 
-
-
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
 	conf = conf.setMaster("local[*]")
