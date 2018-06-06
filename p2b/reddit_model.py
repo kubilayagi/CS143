@@ -78,7 +78,7 @@ def main(context):
     cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
     vectorize_model = cv.fit(combined)
     vectorized = vectorize_model.transform(combined)
-    vectorize_model.save("www/vector.model")
+    vectorize_model.write().overwrite().save("www/vector.model")
 
 
     # TASK 6B
@@ -156,26 +156,35 @@ def main(context):
 	comments_DF.createOrReplaceTempView("comments")
 	whole_data = context.sql("select s.id as submission_id, s.created_utc, s.author_flair_text, c.body as body, c.id as comment_id, c.score as score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
 	whole_data.show(20)
+	sampled = whole_data.sample(False, 0.5, 42)
+	sampled.show(20)
+
+	whole_data.count()
+	sampled.count()
 
 	# TASK 9
 	# Code for task 9...
 	context.udf.register("sanitize", lambda body: reduce(lambda acc, elem: acc + elem.split(), sanitize(body)[1:], []), ArrayType(StringType()))
-	whole_data.createOrReplaceTempView("whole_data")
-	combined = context.sql("select *, sanitize(body) as words from whole_data")
+	sampled.createOrReplaceTempView("sampled")
+	combined = context.sql("select *, sanitize(body) as words from sampled")
 
 	combined.printSchema()
-	combined = combined.select("whole_data.submission_id", "whole_data.created_utc", "whole_data.author_flair_text", "whole_data.body", "words", "whole_data.comment_id", "whole_data.score")
+	combined = combined.select("sampled.submission_id", "sampled.created_utc", "sampled.author_flair_text", "sampled.body", "words", "sampled.comment_id", "sampled.score")
 	combined.show()
 
 	vectorized = vectorize_model.transform(combined)
 	vectorized.show()
 
 	posResult = posModel.transform(vectorized)
-	negResult = negModel.transform(vectorized)
+	posResult = posResult.withColumnRenamed('prediction', 'pos').drop("rawPrediction").drop("probability")
+	result = negModel.transform(posResult)
+	result = result.withColumnRenamed('prediction', 'neg').drop("rawPrediction").drop("probability")
 
-	posResult.select("body", "rawPrediction", "probability", "prediction").show(truncate=False, n=50)
-	negResult.select("body", "rawPrediction", "probability", "prediction").show(truncate=False, n=50)
+	result = result.select("comment_id", "submission_id", "created_utc", "author_flair_text", "score", "pos", "neg")
+	result.show()
 
+	# TASK 10
+	# Code for task 10...
 
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
@@ -184,13 +193,3 @@ if __name__ == "__main__":
 	sqlContext = SQLContext(sc)
 	sc.addPyFile("cleantext.py")
 	main(sqlContext)
-
-
-
-
-
-
-
-
-
-
