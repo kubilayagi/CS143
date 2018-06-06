@@ -202,6 +202,13 @@ def main(context):
 
 	# TASK 10
 	# Code for task 10...
+    result.createOrReplaceTempView("result")
+    pospercentage = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result")
+    timeCol = from_unixtime(result.select("created_utc"), format="yyyy-MM-dd HH:mm:ss")
+    byDayDataFrame = context.createDataFrame(result, timeCol)
+    percentageByState = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by author_flair_text")
+    percentageByCommentScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by comment_score")
+    percentageByStoryScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by story_score")
 
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
