@@ -21,44 +21,44 @@ def main(context):
     submissions_DF = None
     labeled_data_DF = None
 
-    comments_parquet = os.path.abspath("./comments-minimal.parquet")
-    submissions_parquet = os.path.abspath("./submissions.parquet")
-    labeled_data_parquet = os.path.abspath("./labeled_data.parquet")
+	comments_parquet = os.path.abspath("./comments-minimal.parquet")
+	submissions_parquet = os.path.abspath("./submissions.parquet")
+	labeled_data_parquet = os.path.abspath("./labeled_data.parquet")
 
-    if(os.path.exists(labeled_data_parquet)):
-        labeled_data_DF = context.read.parquet(labeled_data_parquet)
-    else:
-        labeled_data_DF = context.read.csv("labeled_data.csv", header=True)
-        labeled_data_DF.write.parquet(labeled_data_parquet)
+	if(os.path.exists(labeled_data_parquet)):
+	    labeled_data_DF = context.read.parquet(labeled_data_parquet)
+	else:
+	    labeled_data_DF = context.read.csv("labeled_data.csv", header=True)
+	    labeled_data_DF.write.parquet(labeled_data_parquet)
 
-    if(os.path.exists(submissions_parquet)):
-        submissions_DF = context.read.parquet(submissions_parquet)
-    else:
-        submissions_DF = context.read.json("submissions.json.bz2")
-        submissions_DF.write.parquet(submissions_parquet)
+	if(os.path.exists(submissions_parquet)):
+	    submissions_DF = context.read.parquet(submissions_parquet)
+	else:
+	    submissions_DF = context.read.json("submissions.json.bz2")
+	    submissions_DF.write.parquet(submissions_parquet)
 
 
-    if(os.path.exists(comments_parquet)):
-        comments_DF = context.read.parquet(comments_parquet)
-    else:
-        comments_DF = context.read.json("comments-minimal.json.bz2")
-        comments_DF.write.parquet(comments_parquet)
+	if(os.path.exists(comments_parquet)):
+	    comments_DF = context.read.parquet(comments_parquet)
+	else:
+	    comments_DF = context.read.json("comments-minimal.json.bz2")
+	    comments_DF.write.parquet(comments_parquet)
     
     
-    # TASK 2
-    # Code for task 2...
-    comments_DF.printSchema()
-    print("************")
-    submissions_DF.printSchema()
-    print("************")
-    labeled_data_DF.printSchema()
-    print("************")
+	# TASK 2
+	# Code for task 2...
+	comments_DF.printSchema()
+	print("************")
+	submissions_DF.printSchema()
+	print("************")
+	labeled_data_DF.printSchema()
+	print("************")
 
-    labeled_data_DF.createOrReplaceTempView("labeled_data")
-    comments_DF.createOrReplaceTempView("comments")
-    labeled_comments = context.sql("select comments.id, cast(labeled_data.labeldjt as int) as label, body, author, author_flair_text, link_id, score, created_utc from labeled_data inner join comments on comments.id = labeled_data.Input_id")
-    #labeled_comments.select("id", "Input_id").show()
-    labeled_comments.show()
+	labeled_data_DF.createOrReplaceTempView("labeled_data")
+	comments_DF.createOrReplaceTempView("comments")
+	labeled_comments = context.sql("select comments.id, cast(labeled_data.labeldjt as int) as label, body, author, author_flair_text, link_id, score, created_utc from labeled_data inner join comments on comments.id = labeled_data.Input_id")
+	#labeled_comments.select("id", "Input_id").show()
+	labeled_comments.show()
 
 
 
@@ -76,9 +76,9 @@ def main(context):
     # TASK 6A
     # Code for task 6A...
     cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
-    model = cv.fit(combined)
-    vectorized = model.transform(combined)
-
+    vectorize_model = cv.fit(combined)
+    vectorized = vectorize_model.transform(combined)
+    vectorize_model.save("www/vector.model")
 
 
     # TASK 6B
@@ -132,8 +132,8 @@ def main(context):
     negModel = negCrossval.fit(negTrain)
 
     # Once we train the models, we don't want to do it again. We can save the models and load them again later.
-    posModel.save("www/pos.model")
-    negModel.save("www/neg.model")
+    posModel.write().overwrite().save("www/pos.model")
+    negModel.write().overwrite().save("www/neg.model")
 
 
     # TEST MODEL
@@ -162,34 +162,26 @@ def main(context):
 	combined = context.sql("select *, sanitize(body) as words from whole_data")
 
 	combined.printSchema()
-	combined = combined.select("whole_data.submission_id", "whole_data.created_utc", "whole_data.author_flair_text", "words", "whole_data.comment_id", "whole_data.score")
+	combined = combined.select("whole_data.submission_id", "whole_data.created_utc", "whole_data.author_flair_text", "whole_data.body", "words", "whole_data.comment_id", "whole_data.score")
 	combined.show()
 
-	cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True)
-	model = cv.fit(combined.select("words"))
-	vectorized = model.transform(combined)
+	vectorized = vectorize_model.transform(combined)
+	vectorized.show()
 
 	posResult = posModel.transform(vectorized)
 	negResult = negModel.transform(vectorized)
 
-	posResult.createOrReplaceTempView("posResult")
-	posAccuracy = context.sql("select avg(case when poslabel = prediction then 1 else 0 end) as accuracy from posResult")
-	posAccuracy.show()
-
-	negResult.createOrReplaceTempView("negResult")
-	negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
-	negAccuracy.show()
-
-
+	posResult.select("body", "rawPrediction", "probability", "prediction").show(truncate=False, n=50)
+	negResult.select("body", "rawPrediction", "probability", "prediction").show(truncate=False, n=50)
 
 
 if __name__ == "__main__":
-    conf = SparkConf().setAppName("CS143 Project 2B")
-    conf = conf.setMaster("local[*]")
-    sc   = SparkContext(conf=conf)
-    sqlContext = SQLContext(sc)
-    sc.addPyFile("cleantext.py")
-    main(sqlContext)
+	conf = SparkConf().setAppName("CS143 Project 2B")
+	conf = conf.setMaster("local[*]")
+	sc   = SparkContext(conf=conf)
+	sqlContext = SQLContext(sc)
+	sc.addPyFile("cleantext.py")
+	main(sqlContext)
 
 
 
