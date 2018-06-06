@@ -100,6 +100,8 @@ def main(context):
     # Replace labelCol with the column containing the label, and featuresCol with the column containing the features.
     poslr = LogisticRegression(labelCol="poslabel", featuresCol="features", maxIter=10)
     neglr = LogisticRegression(labelCol="neglabel", featuresCol="features", maxIter=10)
+    poslr.setThreshold(0.2)
+    neglr.setThreshold(0.25)
     # This is a binary classifier so we need an evaluator that knows how to deal with binary classifiers.
     posEvaluator = BinaryClassificationEvaluator()
     negEvaluator = BinaryClassificationEvaluator()
