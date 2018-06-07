@@ -98,6 +98,34 @@ plt.title('Positive Trump Sentiment Across the US')
 plt.show()
 
 
+# NEGATIVE -----------
+
+neg_colors = {}
+statenames = []
+neg_cmap = plt.cm.Greens # use 'hot' colormap
+
+vmin = 0; vmax = 1 # set range.
+for shapedict in m.states_info:
+    statename = shapedict['NAME']
+    # skip DC and Puerto Rico.
+    if statename not in ['District of Columbia', 'Puerto Rico']:
+        neg = neg_data[statename]
+        neg_colors[statename] = neg_cmap(1. - np.sqrt(( pos - vmin )/( vmax - vmin)))[:3]
+    statenames.append(statename)
+# cycle through state names, color each one.
+
+# NEGATIVE MAP
+ax = plt.gca() # get current axes instance
+for nshape, seg in enumerate(m.states):
+    # skip Puerto Rico and DC
+    if statenames[nshape] not in ['District of Columbia', 'Puerto Rico']:
+        color = rgb2hex(pos_colors[statenames[nshape]]) 
+        poly = Polygon(seg, facecolor=color, edgecolor=color)
+        ax.add_patch(poly)
+plt.title('Positive Trump Sentiment Across the US')
+plt.show()
+
+
 # SOURCE: https://stackoverflow.com/questions/39742305/how-to-use-basemap-python-to-plot-us-with-50-states
 # (this misses Alaska and Hawaii. If you can get them to work, EXTRA CREDIT)
 

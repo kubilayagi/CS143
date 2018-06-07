@@ -281,6 +281,12 @@ def main(context):
 	# commentNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("commentneg.csv")
 	# storyNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("storyneg.csv")
 
+
+	#Final Deliverable part 4
+	result.createOrReplaceTempView("result")
+	top_pos = context.sql("select title, (sum(pos) / count(pos)) as Positive from result group by title order by Positive limit 10")
+	top_neg = context.sql("select title, (sum(neg) / count(neg)) as Negative from result group by title order by Negative limit 10")
+
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
 	conf = conf.setMaster("local[*]")
