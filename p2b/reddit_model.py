@@ -1,8 +1,12 @@
+import matplotlib
+matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
+import matplotlib.pyplot as plt
 from __future__ import print_function
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
 from pyspark.ml.feature import CountVectorizer
 from pyspark.sql.functions import udf
+from pyspark.sql.functions import from_unixtime
 import csv
 import os
 from cleantext import sanitize
@@ -166,6 +170,51 @@ def main(context):
 	negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
 	negAccuracy.show()
 
+	# PLOT ROC CURVE
+	from pyspark.mllib.evaluation import BinaryClassificationMetrics as metric
+
+	results = posResult.select(['probability', 'poslabel'])
+	results_collect = results.collect()
+	results_list = [(float(i[0][0]), 1.0-float(i[1])) for i in results_collect]
+	scoreAndLabels = sc.parallelize(results_list) 
+	metrics = metric(scoreAndLabels)
+
+	from sklearn.metrics import roc_curve, auc
+	fpr = dict()
+	tpr = dict()
+	roc_auc = dict() 
+	y_test = [i[1] for i in results_list]
+	y_score = [i[0] for i in results_list]
+	fpr, tpr, _ = roc_curve(y_test, y_score)
+	roc_auc = auc(fpr, tpr)
+
+	plt.figure()
+	plt.plot(fpr, tpr, 'g--', label='Trump Positive Sentiment, ROC curve (area = %0.2f)' % roc_auc)
+	plt.plot([0, 1], [0, 1], 'k--')
+	plt.xlim([0.0, 1.0])
+	plt.ylim([0.0, 1.05])
+	plt.xlabel('False Positive Rate')
+	plt.ylabel('True Positive Rate')
+	plt.title('Receiver operating characteristic example')
+	plt.legend(loc="lower right")
+
+	results = negResult.select(['probability', 'neglabel'])
+	results_collect = results.collect()
+	results_list = [(float(i[0][0]), 1.0-float(i[1])) for i in results_collect]
+	scoreAndLabels = sc.parallelize(results_list)
+	metrics = metric(scoreAndLabels)
+
+	fpr = dict()
+	tpr = dict()
+	roc_auc = dict()
+	y_test = [i[1] for i in results_list]
+	y_score = [i[0] for i in results_list]
+	fpr, tpr, _ = roc_curve(y_test, y_score)
+	roc_auc = auc(fpr, tpr)
+
+	plt.plot(fpr, tpr, 'r--', label='Trump Negative Sentiment, ROC curve (area = %0.2f)' % roc_auc)
+	plt.legend(loc="lower right")
+	plt.savefig('trump_ROC.png')
 
 	# TASK 8
 	# Code for task 8...
@@ -202,13 +251,13 @@ def main(context):
 
 	# TASK 10
 	# Code for task 10...
-    result.createOrReplaceTempView("result")
-    pospercentage = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result")
-    timeCol = from_unixtime(result.select("created_utc"), format="yyyy-MM-dd HH:mm:ss")
-    byDayDataFrame = context.createDataFrame(result, timeCol)
-    percentageByState = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by author_flair_text")
-    percentageByCommentScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by comment_score")
-    percentageByStoryScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by story_score")
+    # result.createOrReplaceTempView("result")
+    # pospercentage = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result")
+    # timeCol = from_unixtime(result.select("created_utc"), format="yyyy-MM-dd HH:mm:ss")
+    # byDayDataFrame = context.createDataFrame(result, timeCol)
+    # percentageByState = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by author_flair_text")
+    # percentageByCommentScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by comment_score")
+    # percentageByStoryScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by story_score")
 
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
