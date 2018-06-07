@@ -218,9 +218,10 @@ def main(context):
 
 	# TASK 8
 	# Code for task 8...
+	#get title of submission post
 	submissions_DF.createOrReplaceTempView("submissions")
 	comments_DF.createOrReplaceTempView("comments")
-	whole_data = context.sql("select s.id as submission_id, s.author_cakeday, s.created_utc, s.author_flair_text, s.over_18, c.controversiality, c.body as body, c.id as comment_id, c.score as comment_score, s.score as story_score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
+	whole_data = context.sql("select s.id as submission_id, s.title, s.author_cakeday, s.created_utc, s.author_flair_text, s.over_18, c.controversiality, c.body as body, c.id as comment_id, c.score as comment_score, s.score as story_score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
 	whole_data.show(20)
 	sampled = whole_data.sample(False, 0.5, 42)
 	sampled.show(20)
@@ -235,8 +236,8 @@ def main(context):
 	combined = context.sql("select *, sanitize(body) as words from sampled")
 
 	combined.printSchema()
-	combined = combined.select("sampled.comment_id", "sampled.submission_id", "sampled.created_utc", "sampled.author_flair_text", "sampled.author_cakeday", "sampled.over_18", "sampled.controversiality", "sampled.body", "words", "sampled.comment_score", "sampled.story_score")
-	combined.show()
+	combined = combined.select("sampled.comment_id", "sampled.submission_id", "sampled.title", "sampled.created_utc", "sampled.author_flair_text", "sampled.author_cakeday", "sampled.over_18", "sampled.controversiality", "sampled.body", "words", "sampled.comment_score", "sampled.story_score")
+	#combined.show()
 
 	vectorized = vectorize_model.transform(combined)
 	vectorized.show()
@@ -246,18 +247,96 @@ def main(context):
 	result = negModel.transform(posResult)
 	result = result.withColumnRenamed('prediction', 'neg').drop("rawPrediction").drop("probability")
 
-	result = result.drop("body", "words", "features")
+	temp = result
+	temp = temp.drop("body", "words", "features")
+	result = result.drop("body", "words", "features", "title")
 	result.show()
 
 	# TASK 10
 	# Code for task 10...
-    # result.createOrReplaceTempView("result")
-    # pospercentage = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result")
-    # timeCol = from_unixtime(result.select("created_utc"), format="yyyy-MM-dd HH:mm:ss")
-    # byDayDataFrame = context.createDataFrame(result, timeCol)
-    # percentageByState = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by author_flair_text")
-    # percentageByCommentScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by comment_score")
-    # percentageByStoryScore = context.sql("select (sum(pos) * 100 / count(*)) as PosPercentage, (sum(neg) * 100 / count(*)) as NegPercentage from result group by story_score")
+	result.createOrReplaceTempView("result")
+
+	#number 1
+	totalrows = result.count()
+	PosPercentage = result.filter(result.pos == 1.0).count() * 100 / totalrows
+	NegPercentage = result.filter(result.neg == 1.0).count() * 100 / totalrows
+
+	print("Positive Percentage: {}%".format(PosPercentage))
+	print("Negative Percentage: {}%".format(NegPercentage))
+
+	# PosPercentage.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("pospercentage.csv")
+	# NegPercentage.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("negpercentage.csv")
+
+	#number 2
+	#https://medium.com/@mrpowers/working-with-dates-and-times-in-spark-491a9747a1d2
+	with_time = result.withColumn("date", F.from_unixtime(functions.col('created_utc')).cast(DateType()))
+	with_time_pos = with_time.groupBy("date").agg(functions.sum(result.pos) / functions.count(result.pos))
+	with_time_neg = with_time.groupBy("date").agg(functions.sum(result.neg) / functions.count(result.neg))
+	time_data = with_time_pos.join(with_time_neg, ["date"])
+
+	time_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("time_data.csv")
+
+	# with_time_pos.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("timepos.csv")
+	# with_time_neg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("timeneg.csv")
+
+
+	#number 3
+	states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', \
+	'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', \
+	'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', \
+	'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', \
+	'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+
+	statelist = context.createDataFrame(states, StringType())
+
+	#https://stackoverflow.com/questions/40421356/how-to-do-left-outer-join-in-spark-sql
+	#https://docs.databricks.com/spark/latest/faq/join-two-dataframes-duplicated-column.html
+	#we found that the attribute name for statelist dataframe was "value" by using printSchema()
+	new_pos_states = pos_states.join(statelist, ["author_flair_text"], "inner")
+
+
+
+	statelist = statelist.withColumnRenamed("value", "state")
+	result = result.withColumnRenamed("author_flair_text", "state")
+	pos_states = result.groupBy("state").agg(functions.sum(result.pos) / functions.count(result.pos))
+	new_pos_states = pos_states.join(statelist, ["state"], "inner")
+	new_pos_states = new_pos_states.withColumnRenamed("(sum(pos) / count(pos))", "Positive")
+	#new_pos_states = new_pos_states.withColumnRenamed("author_flair_text", "state")
+	neg_states = result.groupBy("state").agg(functions.sum(result.neg) / functions.count(result.neg))
+	new_neg_states = neg_states.join(statelist, ["state"], "inner")
+	new_neg_states = new_neg_states.withColumnRenamed("(sum(neg) / count(neg))", "Negative")
+	#new_neg_states = new_neg_states.withColumnRenamed("author_flair_text", "state")
+	#tried doing left_outer initially, but not all author flair text is a state, so need to do inner instead
+	
+	state_data = new_pos_states.join(new_neg_states, ["state"], "inner")
+
+	state_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("state_data.csv")
+
+	# pos_states.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("statepos.csv")
+	# neg_states.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("stateneg.csv")
+
+	#number 4
+	commentPos = result.groupBy("comment_score").agg(functions.sum(result.pos) / functions.count(result.pos))		#for some reason scalar values don't work???
+	storyPos = result.groupBy("story_score").agg(functions.sum(result.pos) / functions.count(result.pos))
+	commentNeg = result.groupBy("comment_score").agg(functions.sum(result.neg) / functions.count(result.neg))
+	storyNeg = result.groupBy("story_score").agg(functions.sum(result.neg) / functions.count(result.neg))
+
+	comment_data = commentPos.join(commentNeg, ["comment_score"])
+	submission_data = storyPos.join(storyNeg, ["story_score"])
+
+	comment_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("comment_data.csv")
+	submission_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("submission_data.csv")
+
+	# commentPos.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("commentpos.csv")
+	# storyPos.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("storypos.csv")
+	# commentNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("commentneg.csv")
+	# storyNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("storyneg.csv")
+
+	#http://spark.apache.org/docs/2.1.0/api/python/pyspark.sql.html
+	#Final Deliverable part 4
+	temp.createOrReplaceTempView("temp")
+	top_pos = context.sql("select title, (sum(pos) / count(pos)) as Positive from temp group by title order by Positive desc limit 10")
+	top_neg = context.sql("select title, (sum(neg) / count(neg)) as Negative from temp group by title order by Negative desc limit 10")
 
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
