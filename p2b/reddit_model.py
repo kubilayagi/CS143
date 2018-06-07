@@ -188,7 +188,7 @@ def main(context):
 
 	combined.printSchema()
 	combined = combined.select("sampled.comment_id", "sampled.submission_id", "sampled.title", "sampled.created_utc", "sampled.author_flair_text", "sampled.author_cakeday", "sampled.over_18", "sampled.controversiality", "sampled.body", "words", "sampled.comment_score", "sampled.story_score")
-	combined.show()
+	#combined.show()
 
 	vectorized = vectorize_model.transform(combined)
 	vectorized.show()
@@ -198,6 +198,8 @@ def main(context):
 	result = negModel.transform(posResult)
 	result = result.withColumnRenamed('prediction', 'neg').drop("rawPrediction").drop("probability")
 
+	temp = result
+	temp = temp.drop("body", "words", "features")
 	result = result.drop("body", "words", "features", "title")
 	result.show()
 
@@ -281,11 +283,11 @@ def main(context):
 	# commentNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("commentneg.csv")
 	# storyNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("storyneg.csv")
 
-
+	#http://spark.apache.org/docs/2.1.0/api/python/pyspark.sql.html
 	#Final Deliverable part 4
-	result.createOrReplaceTempView("result")
-	top_pos = context.sql("select title, (sum(pos) / count(pos)) as Positive from result group by title order by Positive limit 10")
-	top_neg = context.sql("select title, (sum(neg) / count(neg)) as Negative from result group by title order by Negative limit 10")
+	temp.createOrReplaceTempView("temp")
+	top_pos = context.sql("select title, (sum(pos) / count(pos)) as Positive from temp group by title order by Positive desc limit 10")
+	top_neg = context.sql("select title, (sum(neg) / count(neg)) as Negative from temp group by title order by Negative desc limit 10")
 
 if __name__ == "__main__":
 	conf = SparkConf().setAppName("CS143 Project 2B")
