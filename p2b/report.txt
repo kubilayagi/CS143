@@ -1,0 +1,36 @@
+Kubilay Agi
+Lawrence Chen
+
+
+4.) 
+Maximum Positive rated posts:
++--------------------+--------+                                                 
+|               title|Positive|
++--------------------+--------+
+|Graham-Cassidy in...|     1.0|
+|US strikes Syria ...|     1.0|
+|FCC chairman anno...|     1.0|
+|Gates out at nonp...|     1.0|
+|Juan Williams: Tr...|     1.0|
+|Potential Trump H...|     1.0|
+|Senator Tim Scott...|     1.0|
+|13.5 million Cali...|     1.0|
+|Colbert: Stock ma...|     1.0|
+|Former Breitbart ...|     1.0|
++--------------------+--------+
+
+Most negative posts
++--------------------+--------+                                                 
+|               title|Negative|
++--------------------+--------+
+|Trump Warns North...|     1.0|
+|Trump Exceptional...|     1.0|
+|Trump's sons repo...|     1.0|
+|Will the Supreme ...|     1.0|
+|Trump Dinner at N...|     1.0|
+|Ted Cruz pits ref...|     1.0|
+|Trump wants to li...|     1.0|
+|Mike Flynn is a '...|     1.0|
+|Congress to probe...|     1.0|
+|WH official: Trum...|     1.0|
++--------------------+--------+

@@ -47,18 +47,12 @@ def main(context):
 	
 	# TASK 2
 	# Code for task 2...
-	comments_DF.printSchema()
-	print("************")
-	submissions_DF.printSchema()
-	print("************")
-	labeled_data_DF.printSchema()
-	print("************")
 
 	labeled_data_DF.createOrReplaceTempView("labeled_data")
 	comments_DF.createOrReplaceTempView("comments")
 	labeled_comments = context.sql("select comments.id, cast(labeled_data.labeldjt as int) as label, body, author, author_flair_text, link_id, score, created_utc from labeled_data inner join comments on comments.id = labeled_data.Input_id")
 	#labeled_comments.select("id", "Input_id").show()
-	labeled_comments.show()
+	#labeled_comments.show()
 
 
 
@@ -69,24 +63,23 @@ def main(context):
 	labeled_comments.createOrReplaceTempView("labeled_comments")
 	combined = context.sql("select *, sanitize(body) as words from labeled_comments")
 
-	combined.printSchema()
-	combined.select("body", "words").show()
+	#combined.printSchema()
+	#combined.select("body", "words").show()
 
-	print("********************* TEST *************")
+
 	# TASK 6A
 	# Code for task 6A...
 	cv = CountVectorizer(inputCol="words", outputCol="features", minDF=5.0, binary=True, vocabSize=1 << 18)
-	print("********************* TEST *************")
+
 	vectorize_model = cv.fit(combined)
 	vectorized = vectorize_model.transform(combined)
 	vectorize_model.write().overwrite().save("www/vector.model")
-	print("********************* TEST *************")
 
 	# TASK 6B
 	# Code for task 6B...
 	vectorized.createOrReplaceTempView("vectorized")
 	labeled = context.sql("select *, case when label = 1 then 1 else 0 end as poslabel, case when label = -1 then 1 else 0 end as neglabel from vectorized")
-	labeled.show()
+	#labeled.show()
 
 	# TASK 7
 	# Code for task 7...
@@ -106,7 +99,10 @@ def main(context):
 	poslr = LogisticRegression(labelCol="poslabel", featuresCol="features", maxIter=10)
 	neglr = LogisticRegression(labelCol="neglabel", featuresCol="features", maxIter=10)
 	poslr.setThreshold(0.2)
-	neglr.setThreshold(0.25)
+	neglr.setThreshold(0.25) 
+
+	#we set threshold here to avoid doing extra sql queries at the end
+	
 	# This is a binary classifier so we need an evaluator that knows how to deal with binary classifiers.
 	posEvaluator = BinaryClassificationEvaluator()
 	negEvaluator = BinaryClassificationEvaluator()
@@ -133,7 +129,6 @@ def main(context):
 	posTrain, posTest = pos.randomSplit([0.5, 0.5])
 	negTrain, negTest = neg.randomSplit([0.5, 0.5])
 
-	print("********************* TEST *************")
 	posModel = None
 	negModel = None
 	
@@ -159,12 +154,12 @@ def main(context):
 	posResult = posModel.transform(posTest)
 	posResult.createOrReplaceTempView("posResult")
 	posAccuracy = context.sql("select avg(case when poslabel = prediction then 1 else 0 end) as accuracy from posResult")
-	posAccuracy.show()
+	#posAccuracy.show()
 
 	negResult = negModel.transform(negTest)
 	negResult.createOrReplaceTempView("negResult")
 	negAccuracy = context.sql("select avg(case when neglabel = prediction then 1 else 0 end) as accuracy from negResult")
-	negAccuracy.show()
+	#negAccuracy.show()
 
 
 	# TASK 8
@@ -175,10 +170,10 @@ def main(context):
 	whole_data = context.sql("select s.id as submission_id, s.title, s.author_cakeday, s.created_utc, s.author_flair_text, s.over_18, c.controversiality, c.body as body, c.id as comment_id, c.score as comment_score, s.score as story_score from comments c inner join submissions s on s.id = SUBSTR(c.link_id, 4, LENGTH(c.link_id) - 3) where body not like '%/s' and body not like '&gt%'")
 	whole_data.show(20)
 	sampled = whole_data.sample(False, 0.5, 42)
-	sampled.show(20)
+	#sampled.show(20)
 
-	whole_data.count()
-	sampled.count()
+	#whole_data.count()
+	#sampled.count()
 
 	# TASK 9
 	# Code for task 9...
@@ -201,7 +196,7 @@ def main(context):
 	temp = result
 	temp = temp.drop("body", "words", "features")
 	result = result.drop("body", "words", "features", "title")
-	result.show()
+	#result.show()
 
 	# TASK 10
 	# Code for task 10...
@@ -215,9 +210,6 @@ def main(context):
 	print("Positive Percentage: {}%".format(PosPercentage))
 	print("Negative Percentage: {}%".format(NegPercentage))
 
-	# PosPercentage.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("pospercentage.csv")
-	# NegPercentage.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("negpercentage.csv")
-
 	#number 2
 	#https://medium.com/@mrpowers/working-with-dates-and-times-in-spark-491a9747a1d2
 	with_time = result.withColumn("date", F.from_unixtime(functions.col('created_utc')).cast(DateType()))
@@ -227,10 +219,6 @@ def main(context):
 
 	time_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("time_data.csv")
 
-	# with_time_pos.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("timepos.csv")
-	# with_time_neg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("timeneg.csv")
-
-
 	#number 3
 	states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', \
 	'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', \
@@ -238,7 +226,7 @@ def main(context):
 	'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', \
 	'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
 
-	statelist = context.createDataFrame(states, StringType())
+	statelist = context.createDataFrame(states, StringType()) #create data frame so we can join the two tables together, eliminate any non-state author_flair_text
 
 	#https://stackoverflow.com/questions/40421356/how-to-do-left-outer-join-in-spark-sql
 	#https://docs.databricks.com/spark/latest/faq/join-two-dataframes-duplicated-column.html
@@ -263,10 +251,8 @@ def main(context):
 
 	state_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("state_data.csv")
 
-	# pos_states.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("statepos.csv")
-	# neg_states.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("stateneg.csv")
 
-	#number 4
+	#final deliverable number 4
 	commentPos = result.groupBy("comment_score").agg(functions.sum(result.pos) / functions.count(result.pos))		#for some reason scalar values don't work???
 	storyPos = result.groupBy("story_score").agg(functions.sum(result.pos) / functions.count(result.pos))
 	commentNeg = result.groupBy("comment_score").agg(functions.sum(result.neg) / functions.count(result.neg))
@@ -277,11 +263,6 @@ def main(context):
 
 	comment_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("comment_data.csv")
 	submission_data.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("submission_data.csv")
-
-	# commentPos.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("commentpos.csv")
-	# storyPos.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("storypos.csv")
-	# commentNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("commentneg.csv")
-	# storyNeg.repartition(1).write.format("com.databricks.spark.csv").option("header", "true").save("storyneg.csv")
 
 	#http://spark.apache.org/docs/2.1.0/api/python/pyspark.sql.html
 	#Final Deliverable part 4

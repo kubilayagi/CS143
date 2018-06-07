@@ -2,6 +2,8 @@
 # In your VM: sudo apt-get install libgeos-dev (brew install on Mac)
 # pip3 install https://github.com/matplotlib/basemap/archive/v1.1.0.tar.gz
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime
@@ -67,22 +69,21 @@ https://github.com/matplotlib/basemap/blob/master/examples/st99_d00.shx
 # Lambert Conformal map of lower 48 states.
 m = Basemap(llcrnrlon=-119, llcrnrlat=22, urcrnrlon=-64, urcrnrlat=49,
         projection='lcc', lat_1=33, lat_2=45, lon_0=-95)
-shp_info = m.readshapefile('/path_to/st99_d00','states',drawbounds=True)  # No extension specified in path here.
+shp_info = m.readshapefile('./st99_d00','states',drawbounds=True)  # No extension specified in path here.
 pos_data = dict(zip(state_data.state, state_data.Positive))
-neg_data = dict(zip(state_data.state, state_data.Negative))
 
 # choose a color for each state based on sentiment.
 pos_colors = {}
 statenames = []
 pos_cmap = plt.cm.Greens # use 'hot' colormap
 
-vmin = 0; vmax = 1 # set range.
+vmax = pos_data[max(pos_data.keys(), key=(lambda k: pos_data[k]))]; vmin = pos_data[min(pos_data.keys(), key=(lambda k: pos_data[k]))] # set range.
 for shapedict in m.states_info:
     statename = shapedict['NAME']
     # skip DC and Puerto Rico.
     if statename not in ['District of Columbia', 'Puerto Rico']:
         pos = pos_data[statename]
-        pos_colors[statename] = pos_cmap(1. - np.sqrt(( pos - vmin )/( vmax - vmin)))[:3]
+        pos_colors[statename] = pos_cmap(np.sqrt(( pos - vmin )/( vmax - vmin)))[:3]
     statenames.append(statename)
 # cycle through state names, color each one.
 
@@ -99,18 +100,22 @@ plt.show()
 
 
 # NEGATIVE -----------
+m = Basemap(llcrnrlon=-119, llcrnrlat=22, urcrnrlon=-64, urcrnrlat=49,
+        projection='lcc', lat_1=33, lat_2=45, lon_0=-95)
+shp_info = m.readshapefile('./st99_d00','states',drawbounds=True)  # No extension specified in path here.
+neg_data = dict(zip(state_data.state, state_data.Negative))
 
 neg_colors = {}
 statenames = []
-neg_cmap = plt.cm.Greens # use 'hot' colormap
+neg_cmap = plt.cm.Reds # use 'hot' colormap
 
-vmin = 0; vmax = 1 # set range.
+vmax = neg_data[max(neg_data.keys(), key=(lambda k: neg_data[k]))]; vmin = neg_data[min(neg_data.keys(), key=(lambda k: neg_data[k]))] # set range.
 for shapedict in m.states_info:
     statename = shapedict['NAME']
     # skip DC and Puerto Rico.
     if statename not in ['District of Columbia', 'Puerto Rico']:
         neg = neg_data[statename]
-        neg_colors[statename] = neg_cmap(1. - np.sqrt(( pos - vmin )/( vmax - vmin)))[:3]
+        neg_colors[statename] = neg_cmap(np.sqrt(( neg - vmin )/( vmax - vmin)))[:3]
     statenames.append(statename)
 # cycle through state names, color each one.
 
@@ -119,12 +124,46 @@ ax = plt.gca() # get current axes instance
 for nshape, seg in enumerate(m.states):
     # skip Puerto Rico and DC
     if statenames[nshape] not in ['District of Columbia', 'Puerto Rico']:
-        color = rgb2hex(pos_colors[statenames[nshape]]) 
+        color = rgb2hex(neg_colors[statenames[nshape]]) 
         poly = Polygon(seg, facecolor=color, edgecolor=color)
         ax.add_patch(poly)
-plt.title('Positive Trump Sentiment Across the US')
+plt.title('Negative Trump Sentiment Across the US')
 plt.show()
 
+
+# POSITIVE - NEGATIVE
+shp_info = m.readshapefile('./st99_d00','states',drawbounds=True)  # No extension specified in path here.
+neg_data = dict(zip(state_data.state, state_data.Negative))
+pos_data = dict(zip(state_data.state, state_data.Positive))
+
+diff_colors = {}
+statenames = []
+diff_cmap = plt.cm.jet # use 'hot' colormap
+
+diff_data = { k: (pos_data[k] - neg_data[k]) for k in pos_data.keys()} #find the differences between the two sentiment percentages here, repeat what we did for positive and negative
+
+vmax = diff_data[max(diff_data.keys(), key=(lambda k: diff_data[k]))]; vmin = diff_data[min(diff_data.keys(), key=(lambda k: diff_data[k]))]
+for shapedict in m.states_info:
+    statename = shapedict['NAME']
+    # skip DC and Puerto Rico.
+    if statename not in ['District of Columbia', 'Puerto Rico']:
+        diff = diff_data[statename]
+        diff_colors[statename] = diff_cmap(1-(( diff - vmin )/( vmax - vmin)))[:3]
+    statenames.append(statename)
+# cycle through state names, color each one.
+
+# DIFFERENCE MAP
+ax = plt.gca() # get current axes instance
+for nshape, seg in enumerate(m.states):
+    # skip Puerto Rico and DC
+    if statenames[nshape] not in ['District of Columbia', 'Puerto Rico']:
+        color = rgb2hex(diff_colors[statenames[nshape]]) 
+        poly = Polygon(seg, facecolor=color, edgecolor=color)
+        ax.add_patch(poly)
+plt.title('Difference in Trump Sentiment Across the US')
+plt.show()
+
+#the more red it is, the difference between positive and negative is higher
 
 # SOURCE: https://stackoverflow.com/questions/39742305/how-to-use-basemap-python-to-plot-us-with-50-states
 # (this misses Alaska and Hawaii. If you can get them to work, EXTRA CREDIT)
@@ -132,6 +171,8 @@ plt.show()
 """
 PART 4 SHOULD BE DONE IN SPARK
 """
+
+#this part was implemented in our reddit_model.py at the very end and is marked by a comment "final deliverable number 4"
 
 """
 PLOT 5A: SENTIMENT BY STORY SCORE
